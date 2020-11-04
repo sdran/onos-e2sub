@@ -1,0 +1,9 @@
+module github.com/onosproject/onos-e2sub
+
+go 1.15
+
+require (
+	github.com/gogo/protobuf v1.3.1
+	github.com/onosproject/onos-lib-go v0.6.21
+	google.golang.org/grpc v1.33.1
+)
