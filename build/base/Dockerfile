@@ -7,7 +7,7 @@ ARG ONOS_MAKE_TARGET=build
 
 COPY Makefile go.mod go.sum /go/src/github.com/onosproject/onos-e2sub/
 COPY cmd/ /go/src/github.com/onosproject/onos-e2sub/cmd/
-COPY pkg/ /go/src/github.com/onosproject/onos-e2sub/pkg/
+#COPY pkg/ /go/src/github.com/onosproject/onos-e2sub/pkg/
 COPY vendor/ /go/src/github.com/onosproject/onos-e2sub/vendor/
 COPY api/ /go/src/github.com/onosproject/onos-e2sub/api
 
