@@ -12,7 +12,7 @@ import (
 
 var log = logging.GetLogger("main")
 
-const probeFile = "/tmp/healthy"
+//const probeFile = "/tmp/healthy"
 
 func main() {
 	caPath := flag.String("caPath", "", "path to CA certificate")
