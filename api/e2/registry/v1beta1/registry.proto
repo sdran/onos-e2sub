@@ -29,8 +29,9 @@ service E2RegistryService {
 // Termination is a record identifying the IP address and TCP port coordinates where the E2 termination
 // service is available.
 message TerminationEndPoint {
-    string ip = 1 [(gogoproto.customname) = "IP"];
-    uint32 port = 2 [(gogoproto.customname) = "Port"];
+    string id = 1 [(gogoproto.customname) = "ID", (gogoproto.casttype) = "ID"];
+    string ip = 2 [(gogoproto.customname) = "IP", (gogoproto.casttype) = "IP"];
+    uint32 port = 3 [(gogoproto.customname) = "Port", (gogoproto.casttype) = "Port"];
 }
 
 
@@ -77,7 +78,7 @@ message ListTerminationsResponse {
 
 // WatchTerminationsRequest is a request to receive a stream of all E2 termination changes.
 message WatchTerminationsRequest {
-
+    bool noreplay = 2;
 }
 
 // WatchTerminationsResponse is a response indicating a change in the available E2 termination end-points.

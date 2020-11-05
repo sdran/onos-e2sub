@@ -139,6 +139,7 @@ service is available.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
 | ip | [string](#string) |  |  |
 | port | [uint32](#uint32) |  |  |
 
@@ -151,6 +152,11 @@ service is available.
 
 ### WatchTerminationsRequest
 WatchTerminationsRequest is a request to receive a stream of all E2 termination changes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| noreplay | [bool](#bool) |  |  |
 
 
 

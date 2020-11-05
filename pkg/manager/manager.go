@@ -5,6 +5,7 @@
 package manager
 
 import (
+	"github.com/onosproject/onos-e2sub/pkg/northbound/registry"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 )
@@ -43,24 +44,14 @@ func (m *Manager) Run() {
 
 // Start starts the manager
 func (m *Manager) Start() error {
-	err := m.startSouthboundServer()
-	if err != nil {
-		return err
-	}
-
-	err = m.startNorthboundServer()
+	err := m.startNorthboundServer()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// startSouthboundServer starts the southbound server
-func (m *Manager) startSouthboundServer() error {
-	return nil
-}
-
-// startSouthboundServer starts the northbound gRPC server
+// startNorthboundServer starts the northbound gRPC server
 func (m *Manager) startNorthboundServer() error {
 	s := northbound.NewServer(northbound.NewServerCfg(
 		m.Config.CAPath,
@@ -69,7 +60,14 @@ func (m *Manager) startNorthboundServer() error {
 		int16(m.Config.GRPCPort),
 		true,
 		northbound.SecurityConfig{}))
+
+	regService, err := registry.NewService()
+	if err != nil {
+		return err
+	}
+
 	s.AddService(logging.Service{})
+	s.AddService(regService)
 
 	doneCh := make(chan error)
 	go func() {
