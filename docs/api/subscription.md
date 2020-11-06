@@ -10,7 +10,6 @@
     - [ListTerminationsResponse](#subscription.v1beta1.ListTerminationsResponse)
     - [RemoveTerminationRequest](#subscription.v1beta1.RemoveTerminationRequest)
     - [RemoveTerminationResponse](#subscription.v1beta1.RemoveTerminationResponse)
-    - [Status](#subscription.v1beta1.Status)
     - [TerminationEndPoint](#subscription.v1beta1.TerminationEndPoint)
     - [WatchTerminationsRequest](#subscription.v1beta1.WatchTerminationsRequest)
     - [WatchTerminationsResponse](#subscription.v1beta1.WatchTerminationsResponse)
@@ -49,11 +48,6 @@ AddTerminationRequest is a request for adding a new termination point
 
 ### AddTerminationResponse
 AddTerminationResponse is a response to adding a new termination point
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| status | [Status](#subscription.v1beta1.Status) |  |  |
 
 
 
@@ -104,26 +98,6 @@ RemoveTerminationRequest is a request for adding a new termination point
 
 ### RemoveTerminationResponse
 RemoveTerminationResponse is a response to adding a new termination point
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| status | [Status](#subscription.v1beta1.Status) |  |  |
-
-
-
-
-
-
-<a name="subscription.v1beta1.Status"></a>
-
-### Status
-Status of change request
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| success | [bool](#bool) |  |  |
 
 
 

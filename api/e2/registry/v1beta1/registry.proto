@@ -34,12 +34,6 @@ message TerminationEndPoint {
     uint32 port = 3 [(gogoproto.customname) = "Port", (gogoproto.casttype) = "Port"];
 }
 
-
-// Status of change request
-message Status {
-    bool success = 1;
-}
-
 // Type of change
 enum EventType {
     NONE = 0;
@@ -54,7 +48,6 @@ message AddTerminationRequest {
 
 // AddTerminationResponse is a response to adding a new termination point
 message AddTerminationResponse {
-    Status status = 1;
 }
 
 // RemoveTerminationRequest is a request for adding a new termination point
@@ -64,7 +57,6 @@ message RemoveTerminationRequest {
 
 // RemoveTerminationResponse is a response to adding a new termination point
 message RemoveTerminationResponse {
-    Status status = 1;
 }
 
 // ListTerminationsRequest is a request to list all available E2 terminations

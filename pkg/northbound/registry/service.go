@@ -93,13 +93,10 @@ func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminati
 		return nil, err
 	}
 
-	var eps []regapi.TerminationEndPoint
-	go func() {
-		defer close(ch)
-		for entry := range ch {
-			eps = append(eps, *entry)
-		}
-	}()
+	eps := make([]regapi.TerminationEndPoint, 0)
+	for entry := range ch {
+		eps = append(eps, *entry)
+	}
 
 	res := &regapi.ListTerminationsResponse{
 		EndPoints: eps,

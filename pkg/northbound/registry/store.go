@@ -6,6 +6,7 @@ package registry
 
 import (
 	"context"
+	"errors"
 	"io"
 	"time"
 
@@ -67,9 +68,6 @@ func NewLocalStore() (Store, error) {
 type Store interface {
 	io.Closer
 
-	// Load loads an end-point from the store
-	Load(endPointID regapi.ID) (*regapi.TerminationEndPoint, error)
-
 	// Store stores an end-point in the store
 	Store(point *regapi.TerminationEndPoint) error
 
@@ -107,20 +105,11 @@ type atomixStore struct {
 	closer    func() error
 }
 
-func (s *atomixStore) Load(endPointID regapi.ID) (*regapi.TerminationEndPoint, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-
-	entry, err := s.endPoints.Get(ctx, string(endPointID))
-	if err != nil {
-		return nil, err
-	} else if entry == nil {
-		return nil, nil
-	}
-	return decodeObject(entry)
-}
-
 func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
+	if endPoint.ID == "" {
+		return errors.New("ID cannot be empty")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
@@ -140,6 +129,10 @@ func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
 }
 
 func (s *atomixStore) Delete(id regapi.ID) error {
+	if id == "" {
+		return errors.New("ID cannot be empty")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
