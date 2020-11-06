@@ -77,8 +77,7 @@ func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTermin
 		log.Warnf("RemoveTerminationRequest %+v failed: %v", req, err)
 		return nil, err
 	}
-	res := &regapi.RemoveTerminationResponse{
-	}
+	res := &regapi.RemoveTerminationResponse{}
 	log.Debugf("Sending RemoveTerminationResponse %+v", res)
 	return res, nil
 }

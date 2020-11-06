@@ -140,7 +140,7 @@ func TestWatchBasics(t *testing.T) {
 	assert.NoError(t, err)
 
 	_, err = client.RemoveTermination(context.Background(), &regapi.RemoveTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{ID: "1",},
+		EndPoint: &regapi.TerminationEndPoint{ID: "1"},
 	})
 	assert.NoError(t, err)
 
@@ -156,7 +156,6 @@ func TestBadAdd(t *testing.T) {
 	})
 	assert.Error(t, err)
 }
-
 
 func TestBadRemove(t *testing.T) {
 	conn := createServerConnection(t)

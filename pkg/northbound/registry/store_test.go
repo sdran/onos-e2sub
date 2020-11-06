@@ -64,23 +64,23 @@ func TestStoreWatch(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		e := <- ch
+		e := <-ch
 		assert.Equal(t, EventNone, e.Type)
 		validate(t, e.Object, "1", "10.10.10.1", 111)
 
-		e = <- ch
+		e = <-ch
 		assert.Equal(t, EventInserted, e.Type)
 		validate(t, e.Object, "2", "10.10.10.2", 222)
 
-		e = <- ch
+		e = <-ch
 		assert.Equal(t, EventRemoved, e.Type)
 		validate(t, e.Object, "1", "10.10.10.1", 111)
 
-		e = <- ch
+		e = <-ch
 		assert.Equal(t, EventInserted, e.Type)
 		validate(t, e.Object, "3", "10.10.10.3", 333)
 
-		e = <- ch
+		e = <-ch
 		assert.Equal(t, EventRemoved, e.Type)
 		validate(t, e.Object, "2", "10.10.10.2", 222)
 
