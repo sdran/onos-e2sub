@@ -3,129 +3,202 @@
 
 ## Table of Contents
 
-- [api/e2/registry/v1beta1/registry.proto](#api/e2/registry/v1beta1/registry.proto)
-    - [AddTerminationRequest](#subscription.v1beta1.AddTerminationRequest)
-    - [AddTerminationResponse](#subscription.v1beta1.AddTerminationResponse)
-    - [ListTerminationsRequest](#subscription.v1beta1.ListTerminationsRequest)
-    - [ListTerminationsResponse](#subscription.v1beta1.ListTerminationsResponse)
-    - [RemoveTerminationRequest](#subscription.v1beta1.RemoveTerminationRequest)
-    - [RemoveTerminationResponse](#subscription.v1beta1.RemoveTerminationResponse)
-    - [TerminationEndPoint](#subscription.v1beta1.TerminationEndPoint)
-    - [WatchTerminationsRequest](#subscription.v1beta1.WatchTerminationsRequest)
-    - [WatchTerminationsResponse](#subscription.v1beta1.WatchTerminationsResponse)
+- [api/e2/subscription/v1beta1/subscription.proto](#api/e2/subscription/v1beta1/subscription.proto)
+    - [AddSubscriptionRequest](#subscription.v1beta1.AddSubscriptionRequest)
+    - [AddSubscriptionResponse](#subscription.v1beta1.AddSubscriptionResponse)
+    - [GetSubscriptionRequest](#subscription.v1beta1.GetSubscriptionRequest)
+    - [GetSubscriptionResponse](#subscription.v1beta1.GetSubscriptionResponse)
+    - [ListSubscriptionsRequest](#subscription.v1beta1.ListSubscriptionsRequest)
+    - [ListSubscriptionsResponse](#subscription.v1beta1.ListSubscriptionsResponse)
+    - [Payload](#subscription.v1beta1.Payload)
+    - [RemoveSubscriptionRequest](#subscription.v1beta1.RemoveSubscriptionRequest)
+    - [RemoveSubscriptionResponse](#subscription.v1beta1.RemoveSubscriptionResponse)
+    - [ServiceModel](#subscription.v1beta1.ServiceModel)
+    - [Subscription](#subscription.v1beta1.Subscription)
+    - [WatchSubscriptionsRequest](#subscription.v1beta1.WatchSubscriptionsRequest)
+    - [WatchSubscriptionsResponse](#subscription.v1beta1.WatchSubscriptionsResponse)
   
+    - [Encoding](#subscription.v1beta1.Encoding)
     - [EventType](#subscription.v1beta1.EventType)
+    - [State](#subscription.v1beta1.State)
   
-    - [E2RegistryService](#subscription.v1beta1.E2RegistryService)
+    - [E2SubscriptionService](#subscription.v1beta1.E2SubscriptionService)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="api/e2/registry/v1beta1/registry.proto"></a>
+<a name="api/e2/subscription/v1beta1/subscription.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## api/e2/registry/v1beta1/registry.proto
+## api/e2/subscription/v1beta1/subscription.proto
 
 
 
-<a name="subscription.v1beta1.AddTerminationRequest"></a>
+<a name="subscription.v1beta1.AddSubscriptionRequest"></a>
 
-### AddTerminationRequest
-AddTerminationRequest is a request for adding a new termination point
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| end_point | [TerminationEndPoint](#subscription.v1beta1.TerminationEndPoint) |  |  |
-
-
-
-
-
-
-<a name="subscription.v1beta1.AddTerminationResponse"></a>
-
-### AddTerminationResponse
-AddTerminationResponse is a response to adding a new termination point
-
-
-
-
-
-
-<a name="subscription.v1beta1.ListTerminationsRequest"></a>
-
-### ListTerminationsRequest
-ListTerminationsRequest is a request to list all available E2 terminations
-
-
-
-
-
-
-<a name="subscription.v1beta1.ListTerminationsResponse"></a>
-
-### ListTerminationsResponse
-ListTerminationsResponse is a response to list all available E2 terminations
+### AddSubscriptionRequest
+AddSubscriptionRequest a subscription request
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| end_points | [TerminationEndPoint](#subscription.v1beta1.TerminationEndPoint) | repeated |  |
+| subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
 
 
 
 
 
 
-<a name="subscription.v1beta1.RemoveTerminationRequest"></a>
+<a name="subscription.v1beta1.AddSubscriptionResponse"></a>
 
-### RemoveTerminationRequest
-RemoveTerminationRequest is a request for adding a new termination point
+### AddSubscriptionResponse
+AddSubscriptionResponse a subscription response
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| end_point | [TerminationEndPoint](#subscription.v1beta1.TerminationEndPoint) |  |  |
+| subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
 
 
 
 
 
 
-<a name="subscription.v1beta1.RemoveTerminationResponse"></a>
+<a name="subscription.v1beta1.GetSubscriptionRequest"></a>
 
-### RemoveTerminationResponse
-RemoveTerminationResponse is a response to adding a new termination point
+### GetSubscriptionRequest
 
-
-
-
-
-
-<a name="subscription.v1beta1.TerminationEndPoint"></a>
-
-### TerminationEndPoint
-Termination is a record identifying the IP address and TCP port coordinates where the E2 termination
-service is available.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  |  |
-| ip | [string](#string) |  |  |
-| port | [uint32](#uint32) |  |  |
 
 
 
 
 
 
-<a name="subscription.v1beta1.WatchTerminationsRequest"></a>
+<a name="subscription.v1beta1.GetSubscriptionResponse"></a>
 
-### WatchTerminationsRequest
-WatchTerminationsRequest is a request to receive a stream of all E2 termination changes.
+### GetSubscriptionResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.ListSubscriptionsRequest"></a>
+
+### ListSubscriptionsRequest
+
+
+
+
+
+
+
+<a name="subscription.v1beta1.ListSubscriptionsResponse"></a>
+
+### ListSubscriptionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subscriptions | [Subscription](#subscription.v1beta1.Subscription) | repeated |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.Payload"></a>
+
+### Payload
+Payload is a subscription payload
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| encoding | [Encoding](#subscription.v1beta1.Encoding) |  |  |
+| bytes | [bytes](#bytes) |  |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.RemoveSubscriptionRequest"></a>
+
+### RemoveSubscriptionRequest
+RemoveSubscriptionRequest a subscription delete request
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.RemoveSubscriptionResponse"></a>
+
+### RemoveSubscriptionResponse
+RemoveSubscriptionResponse a subscription delete response
+
+
+
+
+
+
+<a name="subscription.v1beta1.ServiceModel"></a>
+
+### ServiceModel
+ServiceModel is a service model definition
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.Subscription"></a>
+
+### Subscription
+Subscription is a subscription state
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+| revision | [uint64](#uint64) |  |  |
+| app_id | [string](#string) |  |  |
+| service_model | [ServiceModel](#subscription.v1beta1.ServiceModel) |  |  |
+| payload | [Payload](#subscription.v1beta1.Payload) |  |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.WatchSubscriptionsRequest"></a>
+
+### WatchSubscriptionsRequest
+
 
 
 | Field | Type | Label | Description |
@@ -137,52 +210,78 @@ WatchTerminationsRequest is a request to receive a stream of all E2 termination 
 
 
 
-<a name="subscription.v1beta1.WatchTerminationsResponse"></a>
+<a name="subscription.v1beta1.WatchSubscriptionsResponse"></a>
 
-### WatchTerminationsResponse
-WatchTerminationsResponse is a response indicating a change in the available E2 termination end-points.
+### WatchSubscriptionsResponse
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | type | [EventType](#subscription.v1beta1.EventType) |  |  |
-| end_point | [TerminationEndPoint](#subscription.v1beta1.TerminationEndPoint) |  |  |
+| subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
 
 
 
 
 
  
+
+
+<a name="subscription.v1beta1.Encoding"></a>
+
+### Encoding
+Encoding indicates a payload encoding
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ENCODING_ASN1 | 0 |  |
+| ENCODING_PROTO | 1 |  |
+
 
 
 <a name="subscription.v1beta1.EventType"></a>
 
 ### EventType
-Type of change
+EventType is a subscription event type
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | NONE | 0 |  |
 | ADDED | 1 |  |
+| UPDATED | 2 |  |
 | REMOVED | 3 |  |
 
 
- 
+
+<a name="subscription.v1beta1.State"></a>
+
+### State
+State is a subscription state
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| INACTIVE | 0 | INACTIVE indicates the subscription is not currently active |
+| ACTIVE | 1 | ACTIVE indicates the subscription is active |
+
 
  
 
+ 
 
-<a name="subscription.v1beta1.E2RegistryService"></a>
 
-### E2RegistryService
-E2RegistryService manages subscription and subscription delete requests
+<a name="subscription.v1beta1.E2SubscriptionService"></a>
+
+### E2SubscriptionService
+SubscriptionService manages subscription and subscription delete requests
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| AddTermination | [AddTerminationRequest](#subscription.v1beta1.AddTerminationRequest) | [AddTerminationResponse](#subscription.v1beta1.AddTerminationResponse) | AddTermination registers new E2 termination end-point. |
-| RemoveTermination | [RemoveTerminationRequest](#subscription.v1beta1.RemoveTerminationRequest) | [RemoveTerminationResponse](#subscription.v1beta1.RemoveTerminationResponse) | RemoveTermination removes the specified E2 termination end-point. |
-| ListTerminations | [ListTerminationsRequest](#subscription.v1beta1.ListTerminationsRequest) | [ListTerminationsResponse](#subscription.v1beta1.ListTerminationsResponse) | ListTerminations returns the list of currently registered E2 terminations. |
-| WatchTerminations | [WatchTerminationsRequest](#subscription.v1beta1.WatchTerminationsRequest) | [WatchTerminationsResponse](#subscription.v1beta1.WatchTerminationsResponse) stream | WatchTerminations returns a stream of changes in the set of available E2 terminations. |
+| AddSubscription | [AddSubscriptionRequest](#subscription.v1beta1.AddSubscriptionRequest) | [AddSubscriptionResponse](#subscription.v1beta1.AddSubscriptionResponse) | AddSubscription establishes E2 subscriptions on E2 Node. |
+| RemoveSubscription | [RemoveSubscriptionRequest](#subscription.v1beta1.RemoveSubscriptionRequest) | [RemoveSubscriptionResponse](#subscription.v1beta1.RemoveSubscriptionResponse) | RemoveSubscription removes E2 subscriptions on E2 Node. |
+| GetSubscription | [GetSubscriptionRequest](#subscription.v1beta1.GetSubscriptionRequest) | [GetSubscriptionResponse](#subscription.v1beta1.GetSubscriptionResponse) | GetSubscription retrieves information about a specific subscription in the list of existing subscriptions |
+| ListSubscriptions | [ListSubscriptionsRequest](#subscription.v1beta1.ListSubscriptionsRequest) | [ListSubscriptionsResponse](#subscription.v1beta1.ListSubscriptionsResponse) | ListSubscriptions returns the list of current existing subscriptions |
+| WatchSubscriptions | [WatchSubscriptionsRequest](#subscription.v1beta1.WatchSubscriptionsRequest) | [WatchSubscriptionsResponse](#subscription.v1beta1.WatchSubscriptionsResponse) stream | WatchSubscriptions returns a stream of subscription changes |
 
  
 

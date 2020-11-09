@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var log = logging.GetLogger("northbound", "ricapi", "subscription")
+var log = logging.GetLogger("northbound", "ricapi", "registry")
 
 // NewService creates a new registry service
 func NewService() (northbound.Service, error) {
@@ -68,11 +68,25 @@ func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationR
 	return res, nil
 }
 
+// GetTermination retrieves information about a specific termination end-point
+func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationRequest) (*regapi.GetTerminationResponse, error) {
+	log.Debugf("Received GetSubscriptionRequest %+v", req)
+	ep, err := s.endPointStore.Get(req.ID)
+	if err != nil {
+		log.Warnf("GetTerminatonRequest %+v failed: %v", req, err)
+		return nil, err
+	}
+	res := &regapi.GetTerminationResponse{
+		EndPoint: ep,
+	}
+	log.Debugf("Sending GetTerminationResponse %+v", res)
+	return res, nil
+}
+
 // RemoveTermination removes a subscription
 func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTerminationRequest) (*regapi.RemoveTerminationResponse, error) {
 	log.Debugf("Received RemoveTerminationRequest %+v", req)
-	ep := req.EndPoint
-	err := s.endPointStore.Delete(ep.ID)
+	err := s.endPointStore.Delete(req.ID)
 	if err != nil {
 		log.Warnf("RemoveTerminationRequest %+v failed: %v", req, err)
 		return nil, err

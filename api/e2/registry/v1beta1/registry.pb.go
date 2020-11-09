@@ -202,16 +202,106 @@ func (m *AddTerminationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AddTerminationResponse proto.InternalMessageInfo
 
-// RemoveTerminationRequest is a request for adding a new termination point
-type RemoveTerminationRequest struct {
+// GetTerminationRequest is a request for getting existing termination point
+type GetTerminationRequest struct {
+	ID ID `protobuf:"bytes,1,opt,name=id,proto3,casttype=ID" json:"id,omitempty"`
+}
+
+func (m *GetTerminationRequest) Reset()         { *m = GetTerminationRequest{} }
+func (m *GetTerminationRequest) String() string { return proto.CompactTextString(m) }
+func (*GetTerminationRequest) ProtoMessage()    {}
+func (*GetTerminationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_88f90013d872b641, []int{3}
+}
+func (m *GetTerminationRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetTerminationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GetTerminationRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GetTerminationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetTerminationRequest.Merge(m, src)
+}
+func (m *GetTerminationRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetTerminationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetTerminationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetTerminationRequest proto.InternalMessageInfo
+
+func (m *GetTerminationRequest) GetID() ID {
+	if m != nil {
+		return m.ID
+	}
+	return ""
+}
+
+// GetTerminationResponse is a response with invormation about a requested termination point
+type GetTerminationResponse struct {
 	EndPoint *TerminationEndPoint `protobuf:"bytes,1,opt,name=end_point,json=endPoint,proto3" json:"end_point,omitempty"`
+}
+
+func (m *GetTerminationResponse) Reset()         { *m = GetTerminationResponse{} }
+func (m *GetTerminationResponse) String() string { return proto.CompactTextString(m) }
+func (*GetTerminationResponse) ProtoMessage()    {}
+func (*GetTerminationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_88f90013d872b641, []int{4}
+}
+func (m *GetTerminationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetTerminationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GetTerminationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GetTerminationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetTerminationResponse.Merge(m, src)
+}
+func (m *GetTerminationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetTerminationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetTerminationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetTerminationResponse proto.InternalMessageInfo
+
+func (m *GetTerminationResponse) GetEndPoint() *TerminationEndPoint {
+	if m != nil {
+		return m.EndPoint
+	}
+	return nil
+}
+
+// RemoveTerminationRequest is a request for removing termination point
+type RemoveTerminationRequest struct {
+	ID ID `protobuf:"bytes,1,opt,name=id,proto3,casttype=ID" json:"id,omitempty"`
 }
 
 func (m *RemoveTerminationRequest) Reset()         { *m = RemoveTerminationRequest{} }
 func (m *RemoveTerminationRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveTerminationRequest) ProtoMessage()    {}
 func (*RemoveTerminationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_88f90013d872b641, []int{3}
+	return fileDescriptor_88f90013d872b641, []int{5}
 }
 func (m *RemoveTerminationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -240,14 +330,14 @@ func (m *RemoveTerminationRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RemoveTerminationRequest proto.InternalMessageInfo
 
-func (m *RemoveTerminationRequest) GetEndPoint() *TerminationEndPoint {
+func (m *RemoveTerminationRequest) GetID() ID {
 	if m != nil {
-		return m.EndPoint
+		return m.ID
 	}
-	return nil
+	return ""
 }
 
-// RemoveTerminationResponse is a response to adding a new termination point
+// RemoveTerminationResponse is a response to removing a termination point
 type RemoveTerminationResponse struct {
 }
 
@@ -255,7 +345,7 @@ func (m *RemoveTerminationResponse) Reset()         { *m = RemoveTerminationResp
 func (m *RemoveTerminationResponse) String() string { return proto.CompactTextString(m) }
 func (*RemoveTerminationResponse) ProtoMessage()    {}
 func (*RemoveTerminationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_88f90013d872b641, []int{4}
+	return fileDescriptor_88f90013d872b641, []int{6}
 }
 func (m *RemoveTerminationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -292,7 +382,7 @@ func (m *ListTerminationsRequest) Reset()         { *m = ListTerminationsRequest
 func (m *ListTerminationsRequest) String() string { return proto.CompactTextString(m) }
 func (*ListTerminationsRequest) ProtoMessage()    {}
 func (*ListTerminationsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_88f90013d872b641, []int{5}
+	return fileDescriptor_88f90013d872b641, []int{7}
 }
 func (m *ListTerminationsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -330,7 +420,7 @@ func (m *ListTerminationsResponse) Reset()         { *m = ListTerminationsRespon
 func (m *ListTerminationsResponse) String() string { return proto.CompactTextString(m) }
 func (*ListTerminationsResponse) ProtoMessage()    {}
 func (*ListTerminationsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_88f90013d872b641, []int{6}
+	return fileDescriptor_88f90013d872b641, []int{8}
 }
 func (m *ListTerminationsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -368,14 +458,14 @@ func (m *ListTerminationsResponse) GetEndPoints() []TerminationEndPoint {
 
 // WatchTerminationsRequest is a request to receive a stream of all E2 termination changes.
 type WatchTerminationsRequest struct {
-	Noreplay bool `protobuf:"varint,2,opt,name=noreplay,proto3" json:"noreplay,omitempty"`
+	Noreplay bool `protobuf:"varint,1,opt,name=noreplay,proto3" json:"noreplay,omitempty"`
 }
 
 func (m *WatchTerminationsRequest) Reset()         { *m = WatchTerminationsRequest{} }
 func (m *WatchTerminationsRequest) String() string { return proto.CompactTextString(m) }
 func (*WatchTerminationsRequest) ProtoMessage()    {}
 func (*WatchTerminationsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_88f90013d872b641, []int{7}
+	return fileDescriptor_88f90013d872b641, []int{9}
 }
 func (m *WatchTerminationsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -413,7 +503,7 @@ func (m *WatchTerminationsRequest) GetNoreplay() bool {
 
 // WatchTerminationsResponse is a response indicating a change in the available E2 termination end-points.
 type WatchTerminationsResponse struct {
-	Type     EventType           `protobuf:"varint,1,opt,name=type,proto3,enum=subscription.v1beta1.EventType" json:"type,omitempty"`
+	Type     EventType           `protobuf:"varint,1,opt,name=type,proto3,enum=registry.v1beta1.EventType" json:"type,omitempty"`
 	EndPoint TerminationEndPoint `protobuf:"bytes,2,opt,name=end_point,json=endPoint,proto3" json:"end_point"`
 }
 
@@ -421,7 +511,7 @@ func (m *WatchTerminationsResponse) Reset()         { *m = WatchTerminationsResp
 func (m *WatchTerminationsResponse) String() string { return proto.CompactTextString(m) }
 func (*WatchTerminationsResponse) ProtoMessage()    {}
 func (*WatchTerminationsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_88f90013d872b641, []int{8}
+	return fileDescriptor_88f90013d872b641, []int{10}
 }
 func (m *WatchTerminationsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -465,16 +555,18 @@ func (m *WatchTerminationsResponse) GetEndPoint() TerminationEndPoint {
 }
 
 func init() {
-	proto.RegisterEnum("subscription.v1beta1.EventType", EventType_name, EventType_value)
-	proto.RegisterType((*TerminationEndPoint)(nil), "subscription.v1beta1.TerminationEndPoint")
-	proto.RegisterType((*AddTerminationRequest)(nil), "subscription.v1beta1.AddTerminationRequest")
-	proto.RegisterType((*AddTerminationResponse)(nil), "subscription.v1beta1.AddTerminationResponse")
-	proto.RegisterType((*RemoveTerminationRequest)(nil), "subscription.v1beta1.RemoveTerminationRequest")
-	proto.RegisterType((*RemoveTerminationResponse)(nil), "subscription.v1beta1.RemoveTerminationResponse")
-	proto.RegisterType((*ListTerminationsRequest)(nil), "subscription.v1beta1.ListTerminationsRequest")
-	proto.RegisterType((*ListTerminationsResponse)(nil), "subscription.v1beta1.ListTerminationsResponse")
-	proto.RegisterType((*WatchTerminationsRequest)(nil), "subscription.v1beta1.WatchTerminationsRequest")
-	proto.RegisterType((*WatchTerminationsResponse)(nil), "subscription.v1beta1.WatchTerminationsResponse")
+	proto.RegisterEnum("registry.v1beta1.EventType", EventType_name, EventType_value)
+	proto.RegisterType((*TerminationEndPoint)(nil), "registry.v1beta1.TerminationEndPoint")
+	proto.RegisterType((*AddTerminationRequest)(nil), "registry.v1beta1.AddTerminationRequest")
+	proto.RegisterType((*AddTerminationResponse)(nil), "registry.v1beta1.AddTerminationResponse")
+	proto.RegisterType((*GetTerminationRequest)(nil), "registry.v1beta1.GetTerminationRequest")
+	proto.RegisterType((*GetTerminationResponse)(nil), "registry.v1beta1.GetTerminationResponse")
+	proto.RegisterType((*RemoveTerminationRequest)(nil), "registry.v1beta1.RemoveTerminationRequest")
+	proto.RegisterType((*RemoveTerminationResponse)(nil), "registry.v1beta1.RemoveTerminationResponse")
+	proto.RegisterType((*ListTerminationsRequest)(nil), "registry.v1beta1.ListTerminationsRequest")
+	proto.RegisterType((*ListTerminationsResponse)(nil), "registry.v1beta1.ListTerminationsResponse")
+	proto.RegisterType((*WatchTerminationsRequest)(nil), "registry.v1beta1.WatchTerminationsRequest")
+	proto.RegisterType((*WatchTerminationsResponse)(nil), "registry.v1beta1.WatchTerminationsResponse")
 }
 
 func init() {
@@ -482,40 +574,42 @@ func init() {
 }
 
 var fileDescriptor_88f90013d872b641 = []byte{
-	// 528 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0xdf, 0x6e, 0x12, 0x4d,
-	0x18, 0xc6, 0x99, 0x85, 0xef, 0x13, 0xde, 0x6a, 0x03, 0x63, 0xd5, 0x05, 0xcd, 0x42, 0x36, 0xc6,
-	0xd4, 0x3f, 0x5d, 0x2c, 0x4d, 0x3c, 0x2f, 0x61, 0x4d, 0x4c, 0x2a, 0x25, 0x63, 0xa3, 0x87, 0x0d,
-	0xb0, 0x13, 0x1c, 0xb5, 0x3b, 0xd3, 0x9d, 0x29, 0x86, 0xbb, 0xf0, 0x0a, 0xbc, 0x9e, 0x1e, 0xf6,
-	0xd0, 0x23, 0xa2, 0x70, 0x17, 0x3d, 0x32, 0x4c, 0xc7, 0x0d, 0x96, 0xd9, 0x84, 0x1e, 0x78, 0x02,
-	0xb3, 0xfb, 0x3e, 0x33, 0xcf, 0xef, 0x7d, 0xf7, 0xd9, 0x85, 0x27, 0x7d, 0xc1, 0x9a, 0xb4, 0xd5,
-	0x4c, 0xe8, 0x88, 0x49, 0x95, 0x4c, 0x9a, 0xe3, 0xdd, 0x01, 0x55, 0xfd, 0xdd, 0xf4, 0x46, 0x20,
-	0x12, 0xae, 0x38, 0xde, 0x92, 0x67, 0x03, 0x39, 0x4c, 0x98, 0x50, 0x8c, 0xc7, 0x81, 0x11, 0xd5,
-	0xb6, 0x46, 0x7c, 0xc4, 0xb5, 0xa0, 0xb9, 0x58, 0x5d, 0x69, 0xfd, 0xaf, 0x70, 0xf7, 0x88, 0x26,
-	0x27, 0x2c, 0xee, 0x2f, 0xc4, 0x61, 0x1c, 0xf5, 0x38, 0x8b, 0x15, 0x7e, 0x04, 0x0e, 0x8b, 0x5c,
-	0xd4, 0x40, 0xdb, 0xa5, 0xf6, 0xed, 0xd9, 0xb4, 0xee, 0xbc, 0xe9, 0x5c, 0xea, 0x5f, 0xe2, 0xb0,
-	0x48, 0x57, 0x85, 0xeb, 0x2c, 0x55, 0x7b, 0xba, 0xda, 0x23, 0x0e, 0x13, 0xf8, 0x31, 0x14, 0x04,
-	0x4f, 0x94, 0x9b, 0x6f, 0xa0, 0xed, 0x3b, 0xed, 0xf2, 0x6c, 0x5a, 0x2f, 0xf4, 0x78, 0xa2, 0x2e,
-	0xcd, 0x3f, 0xd1, 0x55, 0xff, 0x18, 0xee, 0xed, 0x47, 0xd1, 0x92, 0x37, 0xa1, 0xa7, 0x67, 0x54,
-	0x2a, 0xfc, 0x1a, 0x4a, 0x34, 0x8e, 0x8e, 0xc5, 0x82, 0x43, 0x13, 0x6c, 0xb4, 0x9e, 0x06, 0xb6,
-	0x8e, 0x02, 0x0b, 0x38, 0x29, 0x52, 0xb3, 0xf2, 0x5d, 0xb8, 0x7f, 0xdd, 0x40, 0x0a, 0x1e, 0x4b,
-	0xea, 0x0f, 0xc0, 0x25, 0xf4, 0x84, 0x8f, 0xe9, 0x3f, 0x74, 0x7f, 0x08, 0x55, 0x8b, 0x87, 0x01,
-	0xa8, 0xc2, 0x83, 0x03, 0x26, 0xd5, 0x52, 0x49, 0x1a, 0x7f, 0xff, 0x13, 0xb8, 0xab, 0xa5, 0xab,
-	0x6d, 0xb8, 0x0b, 0x90, 0xb2, 0x49, 0x17, 0x35, 0xf2, 0x37, 0x82, 0x6b, 0x17, 0xce, 0xa7, 0xf5,
-	0x1c, 0x29, 0xfd, 0x41, 0x94, 0xfe, 0x2b, 0x70, 0x3f, 0xf4, 0xd5, 0xf0, 0xa3, 0x85, 0x03, 0xd7,
-	0xa0, 0x18, 0xf3, 0x84, 0x8a, 0x2f, 0xfd, 0x89, 0x7e, 0xd0, 0x45, 0x92, 0x5e, 0xfb, 0xdf, 0x11,
-	0x54, 0x2d, 0x1b, 0x0d, 0xe5, 0x1e, 0x14, 0xd4, 0x44, 0x50, 0x3d, 0xbc, 0xcd, 0x56, 0xdd, 0xce,
-	0x17, 0x8e, 0x69, 0xac, 0x8e, 0x26, 0x82, 0x12, 0x2d, 0xc6, 0x07, 0xcb, 0x63, 0x77, 0x6e, 0x38,
-	0x76, 0xd3, 0x59, 0x3a, 0xfc, 0x67, 0x3b, 0x50, 0x4a, 0x0d, 0x70, 0x11, 0x0a, 0xdd, 0xc3, 0x6e,
-	0x58, 0xce, 0xe1, 0x12, 0xfc, 0xb7, 0xdf, 0xe9, 0x84, 0x9d, 0x32, 0xc2, 0x1b, 0x70, 0x8b, 0x84,
-	0x6f, 0x0f, 0xdf, 0x87, 0x9d, 0x72, 0xbe, 0xf5, 0x2b, 0x0f, 0x95, 0xb0, 0x45, 0xcc, 0x4b, 0xf4,
-	0x8e, 0x26, 0x63, 0x36, 0xa4, 0xf8, 0x33, 0x6c, 0xfe, 0x9d, 0x1f, 0xfc, 0xdc, 0x4e, 0x64, 0x8d,
-	0x71, 0xed, 0xc5, 0x7a, 0x62, 0x33, 0x34, 0x05, 0x95, 0x95, 0xb8, 0xe0, 0xc0, 0x7e, 0x44, 0x56,
-	0x76, 0x6b, 0xcd, 0xb5, 0xf5, 0xc6, 0xf5, 0x14, 0xca, 0xd7, 0xc3, 0x86, 0x77, 0xec, 0x87, 0x64,
-	0xe4, 0xb5, 0x16, 0xac, 0x2b, 0x37, 0x96, 0x63, 0xa8, 0xac, 0x44, 0x27, 0xab, 0xd1, 0xac, 0x70,
-	0x66, 0x35, 0x9a, 0x99, 0xc9, 0x97, 0xa8, 0xed, 0x9e, 0xcf, 0x3c, 0x74, 0x31, 0xf3, 0xd0, 0xcf,
-	0x99, 0x87, 0xbe, 0xcd, 0xbd, 0xdc, 0xc5, 0xdc, 0xcb, 0xfd, 0x98, 0x7b, 0xb9, 0xc1, 0xff, 0xfa,
-	0x43, 0xb8, 0xf7, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x05, 0x90, 0x3e, 0xc7, 0x5e, 0x05, 0x00, 0x00,
+	// 554 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xdd, 0x6e, 0xd3, 0x30,
+	0x18, 0x6d, 0xb2, 0x00, 0xed, 0x37, 0xa8, 0x52, 0xc3, 0x46, 0xda, 0xa1, 0xb4, 0x8a, 0xf8, 0x29,
+	0x45, 0xb4, 0xac, 0x08, 0xc4, 0xed, 0xaa, 0x46, 0xfc, 0x08, 0xb6, 0xca, 0x4c, 0x70, 0x01, 0x12,
+	0xea, 0x1a, 0x53, 0x2c, 0x6d, 0xb1, 0x49, 0x4c, 0x51, 0xdf, 0x82, 0x2b, 0x1e, 0x81, 0x67, 0xd9,
+	0xe5, 0x2e, 0xb9, 0xaa, 0x50, 0xfb, 0x16, 0xbb, 0x42, 0xf3, 0x4c, 0xd4, 0x35, 0x0e, 0x74, 0x12,
+	0x37, 0xad, 0x9d, 0xef, 0x7c, 0xdf, 0x39, 0x27, 0x3e, 0x0e, 0xdc, 0xee, 0x73, 0xda, 0x22, 0xed,
+	0x56, 0x44, 0x86, 0x34, 0x16, 0xd1, 0xb8, 0x35, 0xda, 0xdc, 0x23, 0xa2, 0xbf, 0x99, 0x3c, 0x68,
+	0xf2, 0x88, 0x09, 0x86, 0xec, 0x64, 0xaf, 0x00, 0x95, 0x6b, 0x43, 0x36, 0x64, 0xb2, 0xd8, 0x3a,
+	0x59, 0x9d, 0xe2, 0xbc, 0xaf, 0x70, 0x75, 0x97, 0x44, 0x07, 0x34, 0xec, 0x0b, 0xca, 0x42, 0x3f,
+	0x0c, 0x7a, 0x8c, 0x86, 0x02, 0xdd, 0x00, 0x93, 0x06, 0x8e, 0x51, 0x33, 0xea, 0x85, 0xce, 0xe5,
+	0xe9, 0xa4, 0x6a, 0x3e, 0xef, 0x1e, 0xcb, 0x5f, 0x6c, 0xd2, 0x40, 0x56, 0xb9, 0x63, 0xce, 0x55,
+	0x7b, 0xb2, 0xda, 0xc3, 0x26, 0xe5, 0xe8, 0x26, 0x58, 0x9c, 0x45, 0xc2, 0x59, 0xa9, 0x19, 0xf5,
+	0x2b, 0x1d, 0x7b, 0x3a, 0xa9, 0x5a, 0x3d, 0x16, 0x89, 0x63, 0xf5, 0x8f, 0x65, 0xd5, 0x7b, 0x07,
+	0x6b, 0x5b, 0x41, 0x30, 0xc7, 0x8d, 0xc9, 0xe7, 0x2f, 0x24, 0x16, 0xa8, 0x03, 0x05, 0x12, 0x06,
+	0x1f, 0xf8, 0x89, 0x0e, 0xa9, 0x60, 0xb5, 0x7d, 0xab, 0xb9, 0xe8, 0xa6, 0xa9, 0x11, 0x8d, 0xf3,
+	0x44, 0xad, 0x3c, 0x07, 0xd6, 0x17, 0x87, 0xc7, 0x9c, 0x85, 0x31, 0xf1, 0x1e, 0xc1, 0xda, 0x53,
+	0x22, 0x34, 0xb4, 0x7f, 0x75, 0xec, 0xbd, 0x87, 0xf5, 0xc5, 0xb6, 0xd3, 0x81, 0xff, 0x45, 0xee,
+	0x13, 0x70, 0x30, 0x39, 0x60, 0x23, 0x72, 0x6e, 0x5d, 0x1b, 0x50, 0xd6, 0x74, 0x2a, 0xaf, 0x65,
+	0xb8, 0xfe, 0x92, 0xc6, 0xf3, 0xaa, 0x63, 0x35, 0xd5, 0xfb, 0x08, 0x4e, 0xba, 0xa4, 0x1c, 0xbd,
+	0x00, 0x48, 0x1c, 0xc5, 0x8e, 0x51, 0x5b, 0x59, 0xda, 0x52, 0xc7, 0x3a, 0x9c, 0x54, 0x73, 0xb8,
+	0xf0, 0xc7, 0x58, 0xec, 0x3d, 0x06, 0xe7, 0x6d, 0x5f, 0x0c, 0x3e, 0x69, 0x34, 0xa0, 0x0a, 0xe4,
+	0x43, 0x16, 0x11, 0xbe, 0xdf, 0x1f, 0x4b, 0x7f, 0x79, 0x9c, 0xec, 0xbd, 0xef, 0x06, 0x94, 0x35,
+	0x8d, 0x4a, 0x61, 0x0b, 0x2c, 0x31, 0xe6, 0x44, 0x76, 0x15, 0xdb, 0x1b, 0x69, 0x6d, 0xfe, 0x88,
+	0x84, 0x62, 0x77, 0xcc, 0x09, 0x96, 0x40, 0xf4, 0x6c, 0xfe, 0x90, 0xcc, 0x73, 0x1c, 0x92, 0x72,
+	0x94, 0x1c, 0x55, 0xe3, 0x3e, 0x14, 0x92, 0xe1, 0x28, 0x0f, 0xd6, 0xf6, 0xce, 0xb6, 0x6f, 0xe7,
+	0x50, 0x01, 0x2e, 0x6c, 0x75, 0xbb, 0x7e, 0xd7, 0x36, 0xd0, 0x2a, 0x5c, 0xc2, 0xfe, 0xab, 0x9d,
+	0x37, 0x7e, 0xd7, 0x5e, 0x69, 0xff, 0xb0, 0xa0, 0xe4, 0xb7, 0xb1, 0x62, 0x7a, 0x4d, 0xa2, 0x11,
+	0x1d, 0x10, 0x34, 0x80, 0xe2, 0xd9, 0x78, 0xa2, 0x3b, 0x69, 0x35, 0xda, 0xdb, 0x51, 0xa9, 0xff,
+	0x1b, 0xa8, 0x5e, 0xd2, 0x00, 0x8a, 0x67, 0x23, 0xab, 0x23, 0xd1, 0xde, 0x05, 0x1d, 0x49, 0x46,
+	0xfa, 0xf7, 0xa1, 0x94, 0xca, 0x1f, 0x6a, 0xa4, 0xdb, 0xb3, 0xe2, 0x5d, 0xb9, 0xb7, 0x14, 0x56,
+	0xb1, 0x51, 0xb0, 0x17, 0x53, 0x8b, 0xee, 0xa6, 0x07, 0x64, 0x84, 0xbe, 0xd2, 0x58, 0x06, 0xaa,
+	0xa8, 0x42, 0x28, 0xa5, 0xf2, 0xa7, 0x33, 0x96, 0x95, 0x6e, 0x9d, 0xb1, 0xcc, 0x40, 0x3f, 0x30,
+	0x3a, 0xce, 0xe1, 0xd4, 0x35, 0x8e, 0xa6, 0xae, 0xf1, 0x6b, 0xea, 0x1a, 0xdf, 0x66, 0x6e, 0xee,
+	0x68, 0xe6, 0xe6, 0x7e, 0xce, 0xdc, 0xdc, 0xde, 0x45, 0xf9, 0xa1, 0x7e, 0xf8, 0x3b, 0x00, 0x00,
+	0xff, 0xff, 0x51, 0x79, 0x00, 0x43, 0xfa, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -532,6 +626,8 @@ const _ = grpc.SupportPackageIsVersion4
 type E2RegistryServiceClient interface {
 	// AddTermination registers new E2 termination end-point.
 	AddTermination(ctx context.Context, in *AddTerminationRequest, opts ...grpc.CallOption) (*AddTerminationResponse, error)
+	// GetTermination retrieves information about a specific end-point
+	GetTermination(ctx context.Context, in *GetTerminationRequest, opts ...grpc.CallOption) (*GetTerminationResponse, error)
 	// RemoveTermination removes the specified E2 termination end-point.
 	RemoveTermination(ctx context.Context, in *RemoveTerminationRequest, opts ...grpc.CallOption) (*RemoveTerminationResponse, error)
 	// ListTerminations returns the list of currently registered E2 terminations.
@@ -550,7 +646,16 @@ func NewE2RegistryServiceClient(cc *grpc.ClientConn) E2RegistryServiceClient {
 
 func (c *e2RegistryServiceClient) AddTermination(ctx context.Context, in *AddTerminationRequest, opts ...grpc.CallOption) (*AddTerminationResponse, error) {
 	out := new(AddTerminationResponse)
-	err := c.cc.Invoke(ctx, "/subscription.v1beta1.E2RegistryService/AddTermination", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/registry.v1beta1.E2RegistryService/AddTermination", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *e2RegistryServiceClient) GetTermination(ctx context.Context, in *GetTerminationRequest, opts ...grpc.CallOption) (*GetTerminationResponse, error) {
+	out := new(GetTerminationResponse)
+	err := c.cc.Invoke(ctx, "/registry.v1beta1.E2RegistryService/GetTermination", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -559,7 +664,7 @@ func (c *e2RegistryServiceClient) AddTermination(ctx context.Context, in *AddTer
 
 func (c *e2RegistryServiceClient) RemoveTermination(ctx context.Context, in *RemoveTerminationRequest, opts ...grpc.CallOption) (*RemoveTerminationResponse, error) {
 	out := new(RemoveTerminationResponse)
-	err := c.cc.Invoke(ctx, "/subscription.v1beta1.E2RegistryService/RemoveTermination", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/registry.v1beta1.E2RegistryService/RemoveTermination", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -568,7 +673,7 @@ func (c *e2RegistryServiceClient) RemoveTermination(ctx context.Context, in *Rem
 
 func (c *e2RegistryServiceClient) ListTerminations(ctx context.Context, in *ListTerminationsRequest, opts ...grpc.CallOption) (*ListTerminationsResponse, error) {
 	out := new(ListTerminationsResponse)
-	err := c.cc.Invoke(ctx, "/subscription.v1beta1.E2RegistryService/ListTerminations", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/registry.v1beta1.E2RegistryService/ListTerminations", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -576,7 +681,7 @@ func (c *e2RegistryServiceClient) ListTerminations(ctx context.Context, in *List
 }
 
 func (c *e2RegistryServiceClient) WatchTerminations(ctx context.Context, in *WatchTerminationsRequest, opts ...grpc.CallOption) (E2RegistryService_WatchTerminationsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_E2RegistryService_serviceDesc.Streams[0], "/subscription.v1beta1.E2RegistryService/WatchTerminations", opts...)
+	stream, err := c.cc.NewStream(ctx, &_E2RegistryService_serviceDesc.Streams[0], "/registry.v1beta1.E2RegistryService/WatchTerminations", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -611,6 +716,8 @@ func (x *e2RegistryServiceWatchTerminationsClient) Recv() (*WatchTerminationsRes
 type E2RegistryServiceServer interface {
 	// AddTermination registers new E2 termination end-point.
 	AddTermination(context.Context, *AddTerminationRequest) (*AddTerminationResponse, error)
+	// GetTermination retrieves information about a specific end-point
+	GetTermination(context.Context, *GetTerminationRequest) (*GetTerminationResponse, error)
 	// RemoveTermination removes the specified E2 termination end-point.
 	RemoveTermination(context.Context, *RemoveTerminationRequest) (*RemoveTerminationResponse, error)
 	// ListTerminations returns the list of currently registered E2 terminations.
@@ -625,6 +732,9 @@ type UnimplementedE2RegistryServiceServer struct {
 
 func (*UnimplementedE2RegistryServiceServer) AddTermination(ctx context.Context, req *AddTerminationRequest) (*AddTerminationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTermination not implemented")
+}
+func (*UnimplementedE2RegistryServiceServer) GetTermination(ctx context.Context, req *GetTerminationRequest) (*GetTerminationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTermination not implemented")
 }
 func (*UnimplementedE2RegistryServiceServer) RemoveTermination(ctx context.Context, req *RemoveTerminationRequest) (*RemoveTerminationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveTermination not implemented")
@@ -650,10 +760,28 @@ func _E2RegistryService_AddTermination_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/subscription.v1beta1.E2RegistryService/AddTermination",
+		FullMethod: "/registry.v1beta1.E2RegistryService/AddTermination",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(E2RegistryServiceServer).AddTermination(ctx, req.(*AddTerminationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _E2RegistryService_GetTermination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTerminationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(E2RegistryServiceServer).GetTermination(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/registry.v1beta1.E2RegistryService/GetTermination",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(E2RegistryServiceServer).GetTermination(ctx, req.(*GetTerminationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -668,7 +796,7 @@ func _E2RegistryService_RemoveTermination_Handler(srv interface{}, ctx context.C
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/subscription.v1beta1.E2RegistryService/RemoveTermination",
+		FullMethod: "/registry.v1beta1.E2RegistryService/RemoveTermination",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(E2RegistryServiceServer).RemoveTermination(ctx, req.(*RemoveTerminationRequest))
@@ -686,7 +814,7 @@ func _E2RegistryService_ListTerminations_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/subscription.v1beta1.E2RegistryService/ListTerminations",
+		FullMethod: "/registry.v1beta1.E2RegistryService/ListTerminations",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(E2RegistryServiceServer).ListTerminations(ctx, req.(*ListTerminationsRequest))
@@ -716,12 +844,16 @@ func (x *e2RegistryServiceWatchTerminationsServer) Send(m *WatchTerminationsResp
 }
 
 var _E2RegistryService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "subscription.v1beta1.E2RegistryService",
+	ServiceName: "registry.v1beta1.E2RegistryService",
 	HandlerType: (*E2RegistryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddTermination",
 			Handler:    _E2RegistryService_AddTermination_Handler,
+		},
+		{
+			MethodName: "GetTermination",
+			Handler:    _E2RegistryService_GetTermination_Handler,
 		},
 		{
 			MethodName: "RemoveTermination",
@@ -842,6 +974,71 @@ func (m *AddTerminationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
+func (m *GetTerminationRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetTerminationRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetTerminationRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ID) > 0 {
+		i -= len(m.ID)
+		copy(dAtA[i:], m.ID)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.ID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GetTerminationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetTerminationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetTerminationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.EndPoint != nil {
+		{
+			size, err := m.EndPoint.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRegistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *RemoveTerminationRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -862,15 +1059,10 @@ func (m *RemoveTerminationRequest) MarshalToSizedBuffer(dAtA []byte) (int, error
 	_ = i
 	var l int
 	_ = l
-	if m.EndPoint != nil {
-		{
-			size, err := m.EndPoint.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintRegistry(dAtA, i, uint64(size))
-		}
+	if len(m.ID) > 0 {
+		i -= len(m.ID)
+		copy(dAtA[i:], m.ID)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.ID)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -988,7 +1180,7 @@ func (m *WatchTerminationsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1084,7 +1276,20 @@ func (m *AddTerminationResponse) Size() (n int) {
 	return n
 }
 
-func (m *RemoveTerminationRequest) Size() (n int) {
+func (m *GetTerminationRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ID)
+	if l > 0 {
+		n += 1 + l + sovRegistry(uint64(l))
+	}
+	return n
+}
+
+func (m *GetTerminationResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1092,6 +1297,19 @@ func (m *RemoveTerminationRequest) Size() (n int) {
 	_ = l
 	if m.EndPoint != nil {
 		l = m.EndPoint.Size()
+		n += 1 + l + sovRegistry(uint64(l))
+	}
+	return n
+}
+
+func (m *RemoveTerminationRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ID)
+	if l > 0 {
 		n += 1 + l + sovRegistry(uint64(l))
 	}
 	return n
@@ -1440,7 +1658,7 @@ func (m *AddTerminationResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *RemoveTerminationRequest) Unmarshal(dAtA []byte) error {
+func (m *GetTerminationRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1463,10 +1681,95 @@ func (m *RemoveTerminationRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: RemoveTerminationRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: GetTerminationRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: RemoveTerminationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GetTerminationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ID = ID(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRegistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GetTerminationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRegistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GetTerminationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GetTerminationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1504,6 +1807,91 @@ func (m *RemoveTerminationRequest) Unmarshal(dAtA []byte) error {
 			if err := m.EndPoint.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRegistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RemoveTerminationRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRegistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RemoveTerminationRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RemoveTerminationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ID = ID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1751,7 +2139,7 @@ func (m *WatchTerminationsRequest) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: WatchTerminationsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 2:
+		case 1:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Noreplay", wireType)
 			}

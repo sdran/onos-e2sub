@@ -7,7 +7,7 @@ SPDX-License-Identifier: LicenseRef-ONF-Member-1.0
 syntax = "proto3";
 
 // Package ricapi.e2.registry.v1beta1 defines the interior gRPC interface for E2 termination registry service
-package subscription.v1beta1;
+package registry.v1beta1;
 
 import "gogoproto/gogo.proto";
 
@@ -15,6 +15,9 @@ import "gogoproto/gogo.proto";
 service E2RegistryService {
     // AddTermination registers new E2 termination end-point.
     rpc AddTermination (AddTerminationRequest) returns (AddTerminationResponse);
+
+    // GetTermination retrieves information about a specific end-point
+    rpc GetTermination (GetTerminationRequest) returns (GetTerminationResponse);
 
     // RemoveTermination removes the specified E2 termination end-point.
     rpc RemoveTermination (RemoveTerminationRequest) returns (RemoveTerminationResponse);
@@ -50,12 +53,22 @@ message AddTerminationRequest {
 message AddTerminationResponse {
 }
 
-// RemoveTerminationRequest is a request for adding a new termination point
-message RemoveTerminationRequest {
+// GetTerminationRequest is a request for getting existing termination point
+message GetTerminationRequest {
+    string id = 1 [(gogoproto.customname) = "ID", (gogoproto.casttype) = "ID"];
+}
+
+// GetTerminationResponse is a response with invormation about a requested termination point
+message GetTerminationResponse {
     TerminationEndPoint end_point = 1;
 }
 
-// RemoveTerminationResponse is a response to adding a new termination point
+// RemoveTerminationRequest is a request for removing termination point
+message RemoveTerminationRequest {
+    string id = 1 [(gogoproto.customname) = "ID", (gogoproto.casttype) = "ID"];
+}
+
+// RemoveTerminationResponse is a response to removing a termination point
 message RemoveTerminationResponse {
 }
 
@@ -70,7 +83,7 @@ message ListTerminationsResponse {
 
 // WatchTerminationsRequest is a request to receive a stream of all E2 termination changes.
 message WatchTerminationsRequest {
-    bool noreplay = 2;
+    bool noreplay = 1;
 }
 
 // WatchTerminationsResponse is a response indicating a change in the available E2 termination end-points.

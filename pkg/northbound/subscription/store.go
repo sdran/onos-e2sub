@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: LicenseRef-ONF-Member-1.0
 
-package registry
+package subscription
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	_map "github.com/atomix/go-client/pkg/client/map"
 	"github.com/atomix/go-client/pkg/client/primitive"
 	"github.com/gogo/protobuf/proto"
-	regapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
+	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
 	"github.com/onosproject/onos-e2sub/pkg/config"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
 )
@@ -30,13 +30,13 @@ func NewAtomixStore() (Store, error) {
 		return nil, err
 	}
 
-	endPoints, err := database.GetMap(context.Background(), "endPoints")
+	subscriptions, err := database.GetMap(context.Background(), "subscriptions")
 	if err != nil {
 		return nil, err
 	}
 
 	return &atomixStore{
-		endPoints: endPoints,
+		subscriptions: subscriptions,
 	}, nil
 }
 
@@ -45,7 +45,7 @@ func NewLocalStore() (Store, error) {
 	node, address := atomix.StartLocalNode()
 	name := primitive.Name{
 		Namespace: "local",
-		Name:      "endPoints",
+		Name:      "subscriptions",
 	}
 
 	session, err := primitive.NewSession(context.TODO(), primitive.Partition{ID: 1, Address: address})
@@ -53,14 +53,14 @@ func NewLocalStore() (Store, error) {
 		return nil, err
 	}
 
-	endPoints, err := _map.New(context.Background(), name, []*primitive.Session{session})
+	subscriptions, err := _map.New(context.Background(), name, []*primitive.Session{session})
 	if err != nil {
 		return nil, err
 	}
 
 	return &atomixStore{
-		endPoints: endPoints,
-		closer:    node.Stop,
+		subscriptions: subscriptions,
+		closer:        node.Stop,
 	}, nil
 }
 
@@ -68,19 +68,19 @@ func NewLocalStore() (Store, error) {
 type Store interface {
 	io.Closer
 
-	// Store stores an end-point in the store
-	Store(point *regapi.TerminationEndPoint) error
+	// Store stores a subscription in the store
+	Store(point *subapi.Subscription) error
 
-	// Gets an end-point from the store
-	Get(id regapi.ID) (*regapi.TerminationEndPoint, error)
+	// Delete deletes an subscription from the store
+	Get(subapi.ID) (*subapi.Subscription, error)
 
-	// Delete deletes an end-point from the store
-	Delete(regapi.ID) error
+	// Delete deletes an subscription from the store
+	Delete(subapi.ID) error
 
-	// List streams end-points to the given channel
-	List(chan<- *regapi.TerminationEndPoint) error
+	// List streams subscriptions to the given channel
+	List(chan<- *subapi.Subscription) error
 
-	// Watch streams end-point events to the given channel
+	// Watch streams subscription events to the given channel
 	Watch(chan<- *Event, ...WatchOption) error
 }
 
@@ -102,13 +102,13 @@ func WithReplay() WatchOption {
 	return watchReplayOption{}
 }
 
-// atomixStore is the implementation of the end-point Store
+// atomixStore is the implementation of the subscription Store
 type atomixStore struct {
-	endPoints _map.Map
-	closer    func() error
+	subscriptions _map.Map
+	closer        func() error
 }
 
-func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
+func (s *atomixStore) Store(endPoint *subapi.Subscription) error {
 	if endPoint.ID == "" {
 		return errors.New("ID cannot be empty")
 	}
@@ -121,8 +121,8 @@ func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
 		return err
 	}
 
-	// Put the end-point in the map using an optimistic lock if this is an update
-	_, err = s.endPoints.Put(ctx, string(endPoint.ID), bytes)
+	// Put the end-pPoint in the map using an optimistic lock if this is an update
+	_, err = s.subscriptions.Put(ctx, string(endPoint.ID), bytes)
 
 	if err != nil {
 		return err
@@ -131,7 +131,7 @@ func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
 	return err
 }
 
-func (s *atomixStore) Get(id regapi.ID) (*regapi.TerminationEndPoint, error) {
+func (s *atomixStore) Get(id subapi.ID) (*subapi.Subscription, error) {
 	if id == "" {
 		return nil, errors.New("ID cannot be empty")
 	}
@@ -139,17 +139,17 @@ func (s *atomixStore) Get(id regapi.ID) (*regapi.TerminationEndPoint, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	entry, err := s.endPoints.Get(ctx, string(id))
+	entry, err := s.subscriptions.Get(ctx, string(id))
 	if err != nil {
 		return nil, err
 	}
 
-	ep := &regapi.TerminationEndPoint{}
-	err = proto.Unmarshal(entry.Value, ep)
-	return ep, err
+	sub := &subapi.Subscription{}
+	err = proto.Unmarshal(entry.Value, sub)
+	return sub, err
 }
 
-func (s *atomixStore) Delete(id regapi.ID) error {
+func (s *atomixStore) Delete(id subapi.ID) error {
 	if id == "" {
 		return errors.New("ID cannot be empty")
 	}
@@ -157,13 +157,13 @@ func (s *atomixStore) Delete(id regapi.ID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	_, err := s.endPoints.Remove(ctx, string(id))
+	_, err := s.subscriptions.Remove(ctx, string(id))
 	return err
 }
 
-func (s *atomixStore) List(ch chan<- *regapi.TerminationEndPoint) error {
+func (s *atomixStore) List(ch chan<- *subapi.Subscription) error {
 	mapCh := make(chan *_map.Entry)
-	if err := s.endPoints.Entries(context.Background(), mapCh); err != nil {
+	if err := s.subscriptions.Entries(context.Background(), mapCh); err != nil {
 		return err
 	}
 
@@ -185,7 +185,7 @@ func (s *atomixStore) Watch(ch chan<- *Event, opts ...WatchOption) error {
 	}
 
 	mapCh := make(chan *_map.Event)
-	if err := s.endPoints.Watch(context.Background(), mapCh, watchOpts...); err != nil {
+	if err := s.subscriptions.Watch(context.Background(), mapCh, watchOpts...); err != nil {
 		return err
 	}
 
@@ -205,7 +205,7 @@ func (s *atomixStore) Watch(ch chan<- *Event, opts ...WatchOption) error {
 
 func (s *atomixStore) Close() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = s.endPoints.Close(ctx)
+	_ = s.subscriptions.Close(ctx)
 	cancel()
 	if s.closer != nil {
 		return s.closer()
@@ -213,16 +213,16 @@ func (s *atomixStore) Close() error {
 	return nil
 }
 
-func decodeObject(entry *_map.Entry) (*regapi.TerminationEndPoint, error) {
-	endPoint := &regapi.TerminationEndPoint{}
+func decodeObject(entry *_map.Entry) (*subapi.Subscription, error) {
+	endPoint := &subapi.Subscription{}
 	if err := proto.Unmarshal(entry.Value, endPoint); err != nil {
 		return nil, err
 	}
-	endPoint.ID = regapi.ID(entry.Key)
+	endPoint.ID = subapi.ID(entry.Key)
 	return endPoint, nil
 }
 
-// EventType provides the type for a end-point event
+// EventType provides the type for a subscription event
 type EventType string
 
 const (
@@ -236,8 +236,8 @@ const (
 	EventRemoved EventType = "removed"
 )
 
-// Event is a store event for a end-point
+// Event is a store event for a subscription
 type Event struct {
 	Type   EventType
-	Object *regapi.TerminationEndPoint
+	Object *subapi.Subscription
 }

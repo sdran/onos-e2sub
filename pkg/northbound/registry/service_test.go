@@ -80,7 +80,7 @@ func TestServiceBasics(t *testing.T) {
 	})
 
 	_, err = client.RemoveTermination(context.Background(), &regapi.RemoveTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{ID: "1"},
+		ID: "1",
 	})
 	assert.NoError(t, err)
 
@@ -140,7 +140,7 @@ func TestWatchBasics(t *testing.T) {
 	assert.NoError(t, err)
 
 	_, err = client.RemoveTermination(context.Background(), &regapi.RemoveTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{ID: "1"},
+		ID: "1",
 	})
 	assert.NoError(t, err)
 
@@ -161,8 +161,6 @@ func TestBadRemove(t *testing.T) {
 	conn := createServerConnection(t)
 	client := regapi.NewE2RegistryServiceClient(conn)
 
-	_, err := client.RemoveTermination(context.Background(), &regapi.RemoveTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{},
-	})
+	_, err := client.RemoveTermination(context.Background(), &regapi.RemoveTerminationRequest{})
 	assert.Error(t, err)
 }
