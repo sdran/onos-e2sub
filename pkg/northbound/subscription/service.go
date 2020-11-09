@@ -48,7 +48,7 @@ type Server struct {
 func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptionRequest) (*subapi.AddSubscriptionResponse, error) {
 	log.Debugf("Received AddSubscriptionRequest %+v", req)
 	sub := req.Subscription
-	err := s.subscriptionStore.Store(sub)
+	err := s.subscriptionStore.Store(ctx, sub)
 	if err != nil {
 		log.Warnf("AddSubscriptionRequest %+v failed: %v", req, err)
 		return nil, err
@@ -63,7 +63,7 @@ func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptio
 // GetSubscription retrieves information about a specific subscription in the list of existing subscriptions
 func (s *Server) GetSubscription(ctx context.Context, req *subapi.GetSubscriptionRequest) (*subapi.GetSubscriptionResponse, error) {
 	log.Debugf("Received GetSubscriptionRequest %+v", req)
-	sub, err := s.subscriptionStore.Get(req.ID)
+	sub, err := s.subscriptionStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetSubscriptionRequest %+v failed: %v", req, err)
 		return nil, err
@@ -78,7 +78,7 @@ func (s *Server) GetSubscription(ctx context.Context, req *subapi.GetSubscriptio
 // RemoveSubscription removes a subscription
 func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubscriptionRequest) (*subapi.RemoveSubscriptionResponse, error) {
 	log.Debugf("Received RemoveSubscriptionRequest %+v", req)
-	err := s.subscriptionStore.Delete(req.ID)
+	err := s.subscriptionStore.Delete(ctx, req.ID)
 	if err != nil {
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
 		return nil, err
@@ -92,7 +92,7 @@ func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubsc
 func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscriptionsRequest) (*subapi.ListSubscriptionsResponse, error) {
 	log.Debugf("Received ListSubscriptionsRequest %+v", req)
 	ch := make(chan *subapi.Subscription)
-	err := s.subscriptionStore.List(ch)
+	err := s.subscriptionStore.List(ctx, ch)
 	if err != nil {
 		log.Warnf("ListSubscriptionsRequest %+v failed: %v", req, err)
 		return nil, err
@@ -120,7 +120,7 @@ func (s *Server) WatchSubscriptions(req *subapi.WatchSubscriptionsRequest, serve
 	}
 
 	ch := make(chan *Event)
-	if err := s.subscriptionStore.Watch(ch, watchOpts...); err != nil {
+	if err := s.subscriptionStore.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchTerminationsRequest %+v failed: %v", req, err)
 		return err
 	}

@@ -58,7 +58,7 @@ func CreateE2RegistryClient(cc *grpc.ClientConn) regapi.E2RegistryServiceClient 
 func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationRequest) (*regapi.AddTerminationResponse, error) {
 	log.Debugf("Received AddTerminationRequest %+v", req)
 	ep := req.EndPoint
-	err := s.endPointStore.Store(ep)
+	err := s.endPointStore.Store(ctx, ep)
 	if err != nil {
 		log.Warnf("AddTerminationRequest %+v failed: %v", req, err)
 		return nil, err
@@ -71,7 +71,7 @@ func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationR
 // GetTermination retrieves information about a specific termination end-point
 func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationRequest) (*regapi.GetTerminationResponse, error) {
 	log.Debugf("Received GetSubscriptionRequest %+v", req)
-	ep, err := s.endPointStore.Get(req.ID)
+	ep, err := s.endPointStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetTerminatonRequest %+v failed: %v", req, err)
 		return nil, err
@@ -86,7 +86,7 @@ func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationR
 // RemoveTermination removes a subscription
 func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTerminationRequest) (*regapi.RemoveTerminationResponse, error) {
 	log.Debugf("Received RemoveTerminationRequest %+v", req)
-	err := s.endPointStore.Delete(req.ID)
+	err := s.endPointStore.Delete(ctx, req.ID)
 	if err != nil {
 		log.Warnf("RemoveTerminationRequest %+v failed: %v", req, err)
 		return nil, err
@@ -100,7 +100,7 @@ func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTermin
 func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminationsRequest) (*regapi.ListTerminationsResponse, error) {
 	log.Debugf("Received ListTerminationsRequest %+v", req)
 	ch := make(chan *regapi.TerminationEndPoint)
-	err := s.endPointStore.List(ch)
+	err := s.endPointStore.List(ctx, ch)
 	if err != nil {
 		log.Warnf("ListTerminationsRequest %+v failed: %v", req, err)
 		return nil, err
@@ -127,7 +127,7 @@ func (s *Server) WatchTerminations(req *regapi.WatchTerminationsRequest, server 
 	}
 
 	ch := make(chan *Event)
-	if err := s.endPointStore.Watch(ch, watchOpts...); err != nil {
+	if err := s.endPointStore.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchTerminationsRequest %+v failed: %v", req, err)
 		return err
 	}

@@ -69,19 +69,19 @@ type Store interface {
 	io.Closer
 
 	// Store stores a subscription in the store
-	Store(point *subapi.Subscription) error
+	Store(ctx context.Context, point *subapi.Subscription) error
 
 	// Delete deletes an subscription from the store
-	Get(subapi.ID) (*subapi.Subscription, error)
+	Get(ctx context.Context, id subapi.ID) (*subapi.Subscription, error)
 
 	// Delete deletes an subscription from the store
-	Delete(subapi.ID) error
+	Delete(ctx context.Context, id subapi.ID) error
 
 	// List streams subscriptions to the given channel
-	List(chan<- *subapi.Subscription) error
+	List(ctx context.Context, ch chan<- *subapi.Subscription) error
 
 	// Watch streams subscription events to the given channel
-	Watch(chan<- *Event, ...WatchOption) error
+	Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error
 }
 
 // WatchOption is a configuration option for Watch calls
@@ -108,13 +108,10 @@ type atomixStore struct {
 	closer        func() error
 }
 
-func (s *atomixStore) Store(endPoint *subapi.Subscription) error {
+func (s *atomixStore) Store(ctx context.Context, endPoint *subapi.Subscription) error {
 	if endPoint.ID == "" {
 		return errors.New("ID cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
 
 	bytes, err := proto.Marshal(endPoint)
 	if err != nil {
@@ -131,13 +128,10 @@ func (s *atomixStore) Store(endPoint *subapi.Subscription) error {
 	return err
 }
 
-func (s *atomixStore) Get(id subapi.ID) (*subapi.Subscription, error) {
+func (s *atomixStore) Get(ctx context.Context, id subapi.ID) (*subapi.Subscription, error) {
 	if id == "" {
 		return nil, errors.New("ID cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
 
 	entry, err := s.subscriptions.Get(ctx, string(id))
 	if err != nil {
@@ -149,19 +143,16 @@ func (s *atomixStore) Get(id subapi.ID) (*subapi.Subscription, error) {
 	return sub, err
 }
 
-func (s *atomixStore) Delete(id subapi.ID) error {
+func (s *atomixStore) Delete(ctx context.Context, id subapi.ID) error {
 	if id == "" {
 		return errors.New("ID cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
 
 	_, err := s.subscriptions.Remove(ctx, string(id))
 	return err
 }
 
-func (s *atomixStore) List(ch chan<- *subapi.Subscription) error {
+func (s *atomixStore) List(ctx context.Context, ch chan<- *subapi.Subscription) error {
 	mapCh := make(chan *_map.Entry)
 	if err := s.subscriptions.Entries(context.Background(), mapCh); err != nil {
 		return err
@@ -178,7 +169,7 @@ func (s *atomixStore) List(ch chan<- *subapi.Subscription) error {
 	return nil
 }
 
-func (s *atomixStore) Watch(ch chan<- *Event, opts ...WatchOption) error {
+func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error {
 	watchOpts := make([]_map.WatchOption, 0)
 	for _, opt := range opts {
 		watchOpts = opt.apply(watchOpts)

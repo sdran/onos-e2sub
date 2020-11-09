@@ -69,19 +69,19 @@ type Store interface {
 	io.Closer
 
 	// Store stores an end-point in the store
-	Store(point *regapi.TerminationEndPoint) error
+	Store(ctx context.Context, point *regapi.TerminationEndPoint) error
 
 	// Gets an end-point from the store
-	Get(id regapi.ID) (*regapi.TerminationEndPoint, error)
+	Get(ctx context.Context, id regapi.ID) (*regapi.TerminationEndPoint, error)
 
 	// Delete deletes an end-point from the store
-	Delete(regapi.ID) error
+	Delete(ctx context.Context, id regapi.ID) error
 
 	// List streams end-points to the given channel
-	List(chan<- *regapi.TerminationEndPoint) error
+	List(ctx context.Context, ch chan<- *regapi.TerminationEndPoint) error
 
 	// Watch streams end-point events to the given channel
-	Watch(chan<- *Event, ...WatchOption) error
+	Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error
 }
 
 // WatchOption is a configuration option for Watch calls
@@ -108,13 +108,10 @@ type atomixStore struct {
 	closer    func() error
 }
 
-func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
+func (s *atomixStore) Store(ctx context.Context, endPoint *regapi.TerminationEndPoint) error {
 	if endPoint.ID == "" {
 		return errors.New("ID cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
 
 	bytes, err := proto.Marshal(endPoint)
 	if err != nil {
@@ -131,14 +128,10 @@ func (s *atomixStore) Store(endPoint *regapi.TerminationEndPoint) error {
 	return err
 }
 
-func (s *atomixStore) Get(id regapi.ID) (*regapi.TerminationEndPoint, error) {
+func (s *atomixStore) Get(ctx context.Context, id regapi.ID) (*regapi.TerminationEndPoint, error) {
 	if id == "" {
 		return nil, errors.New("ID cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-
 	entry, err := s.endPoints.Get(ctx, string(id))
 	if err != nil {
 		return nil, err
@@ -149,19 +142,15 @@ func (s *atomixStore) Get(id regapi.ID) (*regapi.TerminationEndPoint, error) {
 	return ep, err
 }
 
-func (s *atomixStore) Delete(id regapi.ID) error {
+func (s *atomixStore) Delete(ctx context.Context, id regapi.ID) error {
 	if id == "" {
 		return errors.New("ID cannot be empty")
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-
 	_, err := s.endPoints.Remove(ctx, string(id))
 	return err
 }
 
-func (s *atomixStore) List(ch chan<- *regapi.TerminationEndPoint) error {
+func (s *atomixStore) List(ctx context.Context, ch chan<- *regapi.TerminationEndPoint) error {
 	mapCh := make(chan *_map.Entry)
 	if err := s.endPoints.Entries(context.Background(), mapCh); err != nil {
 		return err
@@ -178,14 +167,14 @@ func (s *atomixStore) List(ch chan<- *regapi.TerminationEndPoint) error {
 	return nil
 }
 
-func (s *atomixStore) Watch(ch chan<- *Event, opts ...WatchOption) error {
+func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error {
 	watchOpts := make([]_map.WatchOption, 0)
 	for _, opt := range opts {
 		watchOpts = opt.apply(watchOpts)
 	}
 
 	mapCh := make(chan *_map.Event)
-	if err := s.endPoints.Watch(context.Background(), mapCh, watchOpts...); err != nil {
+	if err := s.endPoints.Watch(ctx, mapCh, watchOpts...); err != nil {
 		return err
 	}
 
