@@ -7,86 +7,146 @@ package subscription
 import (
 	"context"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
+	"github.com/onosproject/onos-lib-go/pkg/atomix"
 	"github.com/stretchr/testify/assert"
-	"sync"
 	"testing"
+	"time"
 )
 
-func validate(t *testing.T, sub *subapi.Subscription, id string, aid string, sid string) {
-	assert.Equal(t, subapi.ID(id), sub.ID)
-	assert.Equal(t, subapi.AppID(aid), sub.AppID)
-	assert.Equal(t, subapi.ServiceModelID(sid), sub.ServiceModel.ID)
-}
+func TestSubscriptionStore(t *testing.T) {
+	_, address := atomix.StartLocalNode()
 
-func TestStoreBasics(t *testing.T) {
-	store, _ := NewLocalStore()
-	ctx := context.Background()
-
-	assert.NoError(t, store.Store(ctx, &subapi.Subscription{ID: "1", AppID: "foo", ServiceModel: &subapi.ServiceModel{ID: "sm1"}}))
-
-	sub, err := store.Get(ctx, "1")
+	store1, err := newLocalStore(address)
 	assert.NoError(t, err)
-	validate(t, sub, "1", "foo", "sm1")
+	defer store1.Close()
 
-	assert.NoError(t, store.Store(ctx, &subapi.Subscription{ID: "2", AppID: "foo", ServiceModel: &subapi.ServiceModel{ID: "sm2"}}))
-	assert.NoError(t, store.Store(ctx, &subapi.Subscription{ID: "3", AppID: "bar", ServiceModel: &subapi.ServiceModel{ID: "sm1"}}))
+	store2, err := newLocalStore(address)
+	assert.NoError(t, err)
+	defer store2.Close()
 
-	ch := make(chan *subapi.Subscription)
-	assert.NoError(t, store.List(ctx, ch))
+	ch := make(chan subapi.Event)
+	err = store2.Watch(context.Background(), ch)
+	assert.NoError(t, err)
 
-	count := 0
-	for range ch {
-		count = count + 1
+	sub1 := &subapi.Subscription{
+		ID:    "subscription-1",
+		AppID: subapi.AppID(1),
+	}
+	sub2 := &subapi.Subscription{
+		ID:    "subscription-2",
+		AppID: subapi.AppID(2),
 	}
 
-	assert.NoError(t, store.Delete(ctx, "3"))
-	assert.NoError(t, store.Delete(ctx, "1"))
-
-	sub, err = store.Get(ctx, "2")
+	// Create a new subscription
+	err = store1.Create(context.TODO(), sub1)
 	assert.NoError(t, err)
-	validate(t, sub, "2", "foo", "sm2")
-	assert.NoError(t, store.Close())
+	assert.Equal(t, subapi.ID("subscription-1"), sub1.ID)
+	assert.NotEqual(t, subapi.Revision(0), sub1.Revision)
+
+	// Get the subscription
+	sub1, err = store2.Get(context.TODO(), "subscription-1")
+	assert.NoError(t, err)
+	assert.NotNil(t, sub1)
+	assert.Equal(t, subapi.ID("subscription-1"), sub1.ID)
+	assert.NotEqual(t, subapi.Revision(0), sub1.Revision)
+
+	// Create another subscription
+	err = store2.Create(context.TODO(), sub2)
+	assert.NoError(t, err)
+	assert.Equal(t, subapi.ID("subscription-2"), sub2.ID)
+	assert.NotEqual(t, subapi.Revision(0), sub2.Revision)
+
+	// Verify events were received for the subscriptions
+	subscriptionEvent := nextEvent(t, ch)
+	assert.Equal(t, subapi.ID("subscription-1"), subscriptionEvent.ID)
+	subscriptionEvent = nextEvent(t, ch)
+	assert.Equal(t, subapi.ID("subscription-2"), subscriptionEvent.ID)
+
+	// Update one of the subscriptions
+	sub2.ServiceModel = &subapi.ServiceModel{
+		ID: subapi.ServiceModelID("service-model-2"),
+	}
+	revision := sub2.Revision
+	err = store1.Update(context.TODO(), sub2)
+	assert.NoError(t, err)
+	assert.NotEqual(t, revision, sub2.Revision)
+
+	// Read and then update the subscription
+	sub2, err = store2.Get(context.TODO(), "subscription-2")
+	assert.NoError(t, err)
+	assert.NotNil(t, sub2)
+	sub2.State.Status = subapi.Status_PENDING_DELETE
+	revision = sub2.Revision
+	err = store1.Update(context.TODO(), sub2)
+	assert.NoError(t, err)
+	assert.NotEqual(t, revision, sub2.Revision)
+
+	// Verify that concurrent updates fail
+	sub11, err := store1.Get(context.TODO(), "subscription-1")
+	assert.NoError(t, err)
+	sub12, err := store2.Get(context.TODO(), "subscription-1")
+	assert.NoError(t, err)
+
+	sub11.State.Status = subapi.Status_PENDING_DELETE
+	err = store1.Update(context.TODO(), sub11)
+	assert.NoError(t, err)
+
+	sub12.State.Status = subapi.Status_PENDING_DELETE
+	err = store2.Update(context.TODO(), sub12)
+	assert.Error(t, err)
+
+	// Verify events were received again
+	subscriptionEvent = nextEvent(t, ch)
+	assert.Equal(t, subapi.ID("subscription-2"), subscriptionEvent.ID)
+	subscriptionEvent = nextEvent(t, ch)
+	assert.Equal(t, subapi.ID("subscription-2"), subscriptionEvent.ID)
+	subscriptionEvent = nextEvent(t, ch)
+	assert.Equal(t, subapi.ID("subscription-1"), subscriptionEvent.ID)
+
+	// List the subscriptions
+	subs, err := store1.List(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, subs, 2)
+
+	// Delete a subscription
+	err = store1.Delete(context.TODO(), sub2.ID)
+	assert.NoError(t, err)
+	sub2, err = store2.Get(context.TODO(), "subscription-2")
+	assert.NoError(t, err)
+	assert.Nil(t, sub2)
+
+	sub := &subapi.Subscription{
+		ID:    "subscription-1",
+		AppID: subapi.AppID(1),
+	}
+
+	err = store1.Create(context.TODO(), sub)
+	assert.Error(t, err)
+
+	sub = &subapi.Subscription{
+		ID:    "subscription-2",
+		AppID: subapi.AppID(2),
+	}
+
+	err = store1.Create(context.TODO(), sub)
+	assert.NoError(t, err)
+
+	ch = make(chan subapi.Event)
+	err = store1.Watch(context.TODO(), ch, WithReplay())
+	assert.NoError(t, err)
+
+	sub = nextEvent(t, ch)
+	assert.NotNil(t, sub)
+	sub = nextEvent(t, ch)
+	assert.NotNil(t, sub)
 }
 
-func TestStoreWatch(t *testing.T) {
-	store, _ := NewLocalStore()
-	ctx := context.Background()
-
-	assert.NoError(t, store.Store(ctx, &subapi.Subscription{ID: "1", AppID: "foo", ServiceModel: &subapi.ServiceModel{ID: "sm1"}}))
-
-	ch := make(chan *Event)
-	assert.NoError(t, store.Watch(ctx, ch, WithReplay()))
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		e := <-ch
-		assert.Equal(t, EventNone, e.Type)
-		validate(t, e.Object, "1", "foo", "sm1")
-
-		e = <-ch
-		assert.Equal(t, EventInserted, e.Type)
-		validate(t, e.Object, "2", "foo", "sm2")
-
-		e = <-ch
-		assert.Equal(t, EventRemoved, e.Type)
-		validate(t, e.Object, "1", "foo", "sm1")
-
-		e = <-ch
-		assert.Equal(t, EventInserted, e.Type)
-		validate(t, e.Object, "3", "bar", "sm1")
-
-		e = <-ch
-		assert.Equal(t, EventRemoved, e.Type)
-		validate(t, e.Object, "2", "foo", "sm2")
-
-		wg.Done()
-		close(ch)
-	}()
-
-	assert.NoError(t, store.Store(ctx, &subapi.Subscription{ID: "2", AppID: "foo", ServiceModel: &subapi.ServiceModel{ID: "sm2"}}))
-	assert.NoError(t, store.Delete(ctx, "1"))
-	assert.NoError(t, store.Store(ctx, &subapi.Subscription{ID: "3", AppID: "bar", ServiceModel: &subapi.ServiceModel{ID: "sm1"}}))
-	assert.NoError(t, store.Delete(ctx, "2"))
-	wg.Wait()
+func nextEvent(t *testing.T, ch chan subapi.Event) *subapi.Subscription {
+	select {
+	case c := <-ch:
+		return &c.Subscription
+	case <-time.After(5 * time.Second):
+		t.FailNow()
+	}
+	return nil
 }

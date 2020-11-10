@@ -48,7 +48,7 @@ type Server struct {
 func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptionRequest) (*subapi.AddSubscriptionResponse, error) {
 	log.Debugf("Received AddSubscriptionRequest %+v", req)
 	sub := req.Subscription
-	err := s.subscriptionStore.Store(ctx, sub)
+	err := s.subscriptionStore.Create(ctx, sub)
 	if err != nil {
 		log.Warnf("AddSubscriptionRequest %+v failed: %v", req, err)
 		return nil, err
@@ -78,7 +78,13 @@ func (s *Server) GetSubscription(ctx context.Context, req *subapi.GetSubscriptio
 // RemoveSubscription removes a subscription
 func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubscriptionRequest) (*subapi.RemoveSubscriptionResponse, error) {
 	log.Debugf("Received RemoveSubscriptionRequest %+v", req)
-	err := s.subscriptionStore.Delete(ctx, req.ID)
+	sub, err := s.subscriptionStore.Get(ctx, req.ID)
+	if err != nil {
+		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
+		return nil, err
+	}
+	sub.State.Status = subapi.Status_PENDING_DELETE
+	err = s.subscriptionStore.Update(ctx, sub)
 	if err != nil {
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
 		return nil, err
@@ -91,20 +97,21 @@ func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubsc
 // ListSubscriptions returns the list of current existing subscriptions
 func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscriptionsRequest) (*subapi.ListSubscriptionsResponse, error) {
 	log.Debugf("Received ListSubscriptionsRequest %+v", req)
-	ch := make(chan *subapi.Subscription)
-	err := s.subscriptionStore.List(ctx, ch)
+	subs, err := s.subscriptionStore.List(ctx)
 	if err != nil {
 		log.Warnf("ListSubscriptionsRequest %+v failed: %v", req, err)
 		return nil, err
 	}
 
-	subs := make([]subapi.Subscription, 0)
-	for entry := range ch {
-		subs = append(subs, *entry)
+	filtered := make([]subapi.Subscription, 0, len(subs))
+	for _, sub := range subs {
+		if sub.State.Status == subapi.Status_ALIVE {
+			filtered = append(filtered, sub)
+		}
 	}
 
 	res := &subapi.ListSubscriptionsResponse{
-		Subscriptions: subs,
+		Subscriptions: filtered,
 	}
 	log.Debugf("Sending ListSubscriptionsResponse %+v", res)
 	return res, nil
@@ -119,7 +126,7 @@ func (s *Server) WatchSubscriptions(req *subapi.WatchSubscriptionsRequest, serve
 		watchOpts = append(watchOpts, WithReplay())
 	}
 
-	ch := make(chan *Event)
+	ch := make(chan subapi.Event)
 	if err := s.subscriptionStore.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchTerminationsRequest %+v failed: %v", req, err)
 		return err
@@ -129,21 +136,14 @@ func (s *Server) WatchSubscriptions(req *subapi.WatchSubscriptionsRequest, serve
 }
 
 // Stream is the ongoing stream for WatchSubscriptions request
-func (s *Server) Stream(server subapi.E2SubscriptionService_WatchSubscriptionsServer, ch chan *Event) error {
+func (s *Server) Stream(server subapi.E2SubscriptionService_WatchSubscriptionsServer, ch chan subapi.Event) error {
 	for event := range ch {
-		var t subapi.EventType
-		switch event.Type {
-		case EventNone:
-			t = subapi.EventType_NONE
-		case EventInserted:
-			t = subapi.EventType_ADDED
-		case EventRemoved:
-			t = subapi.EventType_REMOVED
+		if event.Type == subapi.EventType_UPDATED {
+			continue
 		}
 
 		res := &subapi.WatchSubscriptionsResponse{
-			Type:         t,
-			Subscription: *event.Object,
+			Event: event,
 		}
 
 		log.Debugf("Sending WatchSubscriptionsResponse %+v", res)

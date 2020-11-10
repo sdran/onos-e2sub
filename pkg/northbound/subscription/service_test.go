@@ -113,19 +113,14 @@ func TestWatchBasics(t *testing.T) {
 	go func() {
 		e, err := res.Recv()
 		assert.NoError(t, err)
-		assert.Equal(t, subapi.EventType_NONE, e.Type)
-		assert.Equal(t, subapi.ID("1"), e.Subscription.ID)
+		assert.Equal(t, subapi.EventType_NONE, e.Event.Type)
+		assert.Equal(t, subapi.ID("1"), e.Event.Subscription.ID)
 		pause.Done()
 
 		e, err = res.Recv()
 		assert.NoError(t, err)
-		assert.Equal(t, subapi.EventType_ADDED, e.Type)
-		assert.Equal(t, subapi.ID("2"), e.Subscription.ID)
-
-		e, err = res.Recv()
-		assert.NoError(t, err)
-		assert.Equal(t, subapi.EventType_REMOVED, e.Type)
-		assert.Equal(t, subapi.ID("1"), e.Subscription.ID)
+		assert.Equal(t, subapi.EventType_ADDED, e.Event.Type)
+		assert.Equal(t, subapi.ID("2"), e.Event.Subscription.ID)
 
 		wg.Done()
 	}()

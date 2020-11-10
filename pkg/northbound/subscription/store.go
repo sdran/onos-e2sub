@@ -7,10 +7,11 @@ package subscription
 import (
 	"context"
 	"errors"
+	"github.com/atomix/go-client/pkg/client/util/net"
 	"io"
 	"time"
 
-	_map "github.com/atomix/go-client/pkg/client/map"
+	"github.com/atomix/go-client/pkg/client/map"
 	"github.com/atomix/go-client/pkg/client/primitive"
 	"github.com/gogo/protobuf/proto"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
@@ -40,9 +41,14 @@ func NewAtomixStore() (Store, error) {
 	}, nil
 }
 
-// NewLocalStore returns a new local end-point store
+// NewLocalStore returns a new local subscription store
 func NewLocalStore() (Store, error) {
-	node, address := atomix.StartLocalNode()
+	_, address := atomix.StartLocalNode()
+	return newLocalStore(address)
+}
+
+// newLocalStore creates a new local subscription store
+func newLocalStore(address net.Address) (Store, error) {
 	name := primitive.Name{
 		Namespace: "local",
 		Name:      "subscriptions",
@@ -60,7 +66,6 @@ func NewLocalStore() (Store, error) {
 
 	return &atomixStore{
 		subscriptions: subscriptions,
-		closer:        node.Stop,
 	}, nil
 }
 
@@ -68,8 +73,11 @@ func NewLocalStore() (Store, error) {
 type Store interface {
 	io.Closer
 
-	// Store stores a subscription in the store
-	Store(ctx context.Context, point *subapi.Subscription) error
+	// Create creates a subscription in the store
+	Create(ctx context.Context, sub *subapi.Subscription) error
+
+	// Update updates a subscription in the store
+	Update(ctx context.Context, sub *subapi.Subscription) error
 
 	// Delete deletes an subscription from the store
 	Get(ctx context.Context, id subapi.ID) (*subapi.Subscription, error)
@@ -78,10 +86,10 @@ type Store interface {
 	Delete(ctx context.Context, id subapi.ID) error
 
 	// List streams subscriptions to the given channel
-	List(ctx context.Context, ch chan<- *subapi.Subscription) error
+	List(ctx context.Context) ([]subapi.Subscription, error)
 
 	// Watch streams subscription events to the given channel
-	Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error
+	Watch(ctx context.Context, ch chan<- subapi.Event, opts ...WatchOption) error
 }
 
 // WatchOption is a configuration option for Watch calls
@@ -105,26 +113,46 @@ func WithReplay() WatchOption {
 // atomixStore is the implementation of the subscription Store
 type atomixStore struct {
 	subscriptions _map.Map
-	closer        func() error
 }
 
-func (s *atomixStore) Store(ctx context.Context, endPoint *subapi.Subscription) error {
-	if endPoint.ID == "" {
+func (s *atomixStore) Create(ctx context.Context, sub *subapi.Subscription) error {
+	if sub.ID == "" {
 		return errors.New("ID cannot be empty")
 	}
 
-	bytes, err := proto.Marshal(endPoint)
+	bytes, err := proto.Marshal(sub)
 	if err != nil {
 		return err
 	}
 
-	// Put the end-pPoint in the map using an optimistic lock if this is an update
-	_, err = s.subscriptions.Put(ctx, string(endPoint.ID), bytes)
+	// Create the subscription in the map only if it does not already exist
+	entry, err := s.subscriptions.Put(ctx, string(sub.ID), bytes, _map.IfNotSet())
+	if err != nil {
+		return err
+	}
+	sub.Revision = subapi.Revision(entry.Version)
+	return err
+}
 
+func (s *atomixStore) Update(ctx context.Context, sub *subapi.Subscription) error {
+	if sub.ID == "" {
+		return errors.New("ID cannot be empty")
+	}
+	if sub.Revision == 0 {
+		return errors.New("object must contain a revision on update")
+	}
+
+	bytes, err := proto.Marshal(sub)
 	if err != nil {
 		return err
 	}
 
+	// Update the subscription in the map
+	entry, err := s.subscriptions.Put(ctx, string(sub.ID), bytes, _map.IfVersion(_map.Version(sub.Revision)))
+	if err != nil {
+		return err
+	}
+	sub.Revision = subapi.Revision(entry.Version)
 	return err
 }
 
@@ -137,10 +165,10 @@ func (s *atomixStore) Get(ctx context.Context, id subapi.ID) (*subapi.Subscripti
 	if err != nil {
 		return nil, err
 	}
-
-	sub := &subapi.Subscription{}
-	err = proto.Unmarshal(entry.Value, sub)
-	return sub, err
+	if entry == nil {
+		return nil, nil
+	}
+	return decodeObject(entry)
 }
 
 func (s *atomixStore) Delete(ctx context.Context, id subapi.ID) error {
@@ -152,24 +180,22 @@ func (s *atomixStore) Delete(ctx context.Context, id subapi.ID) error {
 	return err
 }
 
-func (s *atomixStore) List(ctx context.Context, ch chan<- *subapi.Subscription) error {
+func (s *atomixStore) List(ctx context.Context) ([]subapi.Subscription, error) {
 	mapCh := make(chan *_map.Entry)
 	if err := s.subscriptions.Entries(context.Background(), mapCh); err != nil {
-		return err
+		return nil, err
 	}
 
-	go func() {
-		defer close(ch)
-		for entry := range mapCh {
-			if endPoint, err := decodeObject(entry); err == nil {
-				ch <- endPoint
-			}
+	subs := make([]subapi.Subscription, 0)
+	for entry := range mapCh {
+		if sub, err := decodeObject(entry); err == nil {
+			subs = append(subs, *sub)
 		}
-	}()
-	return nil
+	}
+	return subs, nil
 }
 
-func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error {
+func (s *atomixStore) Watch(ctx context.Context, ch chan<- subapi.Event, opts ...WatchOption) error {
 	watchOpts := make([]_map.WatchOption, 0)
 	for _, opt := range opts {
 		watchOpts = opt.apply(watchOpts)
@@ -183,10 +209,21 @@ func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...Watch
 	go func() {
 		defer close(ch)
 		for event := range mapCh {
-			if endPoint, err := decodeObject(event.Entry); err == nil {
-				ch <- &Event{
-					Type:   EventType(event.Type),
-					Object: endPoint,
+			if sub, err := decodeObject(event.Entry); err == nil {
+				var eventType subapi.EventType
+				switch event.Type {
+				case _map.EventNone:
+					eventType = subapi.EventType_NONE
+				case _map.EventInserted:
+					eventType = subapi.EventType_ADDED
+				case _map.EventUpdated:
+					eventType = subapi.EventType_UPDATED
+				case _map.EventRemoved:
+					eventType = subapi.EventType_REMOVED
+				}
+				ch <- subapi.Event{
+					Type:         eventType,
+					Subscription: *sub,
 				}
 			}
 		}
@@ -196,39 +233,16 @@ func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...Watch
 
 func (s *atomixStore) Close() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = s.subscriptions.Close(ctx)
-	cancel()
-	if s.closer != nil {
-		return s.closer()
-	}
-	return nil
+	defer cancel()
+	return s.subscriptions.Close(ctx)
 }
 
 func decodeObject(entry *_map.Entry) (*subapi.Subscription, error) {
-	endPoint := &subapi.Subscription{}
-	if err := proto.Unmarshal(entry.Value, endPoint); err != nil {
+	sub := &subapi.Subscription{}
+	if err := proto.Unmarshal(entry.Value, sub); err != nil {
 		return nil, err
 	}
-	endPoint.ID = subapi.ID(entry.Key)
-	return endPoint, nil
-}
-
-// EventType provides the type for a subscription event
-type EventType string
-
-const (
-	// EventNone is no event
-	EventNone EventType = ""
-	// EventInserted is inserted
-	EventInserted EventType = "inserted"
-	// EventUpdated is updated
-	EventUpdated EventType = "updated"
-	// EventRemoved is removed
-	EventRemoved EventType = "removed"
-)
-
-// Event is a store event for a subscription
-type Event struct {
-	Type   EventType
-	Object *subapi.Subscription
+	sub.ID = subapi.ID(entry.Key)
+	sub.Revision = subapi.Revision(entry.Version)
+	return sub, nil
 }

@@ -6,6 +6,7 @@
 - [api/e2/subscription/v1beta1/subscription.proto](#api/e2/subscription/v1beta1/subscription.proto)
     - [AddSubscriptionRequest](#subscription.v1beta1.AddSubscriptionRequest)
     - [AddSubscriptionResponse](#subscription.v1beta1.AddSubscriptionResponse)
+    - [Event](#subscription.v1beta1.Event)
     - [GetSubscriptionRequest](#subscription.v1beta1.GetSubscriptionRequest)
     - [GetSubscriptionResponse](#subscription.v1beta1.GetSubscriptionResponse)
     - [ListSubscriptionsRequest](#subscription.v1beta1.ListSubscriptionsRequest)
@@ -14,13 +15,14 @@
     - [RemoveSubscriptionRequest](#subscription.v1beta1.RemoveSubscriptionRequest)
     - [RemoveSubscriptionResponse](#subscription.v1beta1.RemoveSubscriptionResponse)
     - [ServiceModel](#subscription.v1beta1.ServiceModel)
+    - [State](#subscription.v1beta1.State)
     - [Subscription](#subscription.v1beta1.Subscription)
     - [WatchSubscriptionsRequest](#subscription.v1beta1.WatchSubscriptionsRequest)
     - [WatchSubscriptionsResponse](#subscription.v1beta1.WatchSubscriptionsResponse)
   
     - [Encoding](#subscription.v1beta1.Encoding)
     - [EventType](#subscription.v1beta1.EventType)
-    - [State](#subscription.v1beta1.State)
+    - [Status](#subscription.v1beta1.Status)
   
     - [E2SubscriptionService](#subscription.v1beta1.E2SubscriptionService)
   
@@ -58,6 +60,22 @@ AddSubscriptionResponse a subscription response
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
+
+
+
+
+
+
+<a name="subscription.v1beta1.Event"></a>
+
+### Event
+Event is a subscription event
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [EventType](#subscription.v1beta1.EventType) |  |  |
 | subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
 
 
@@ -176,6 +194,21 @@ ServiceModel is a service model definition
 
 
 
+<a name="subscription.v1beta1.State"></a>
+
+### State
+State is the subscription state
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [Status](#subscription.v1beta1.Status) |  |  |
+
+
+
+
+
+
 <a name="subscription.v1beta1.Subscription"></a>
 
 ### Subscription
@@ -189,6 +222,7 @@ Subscription is a subscription state
 | app_id | [string](#string) |  |  |
 | service_model | [ServiceModel](#subscription.v1beta1.ServiceModel) |  |  |
 | payload | [Payload](#subscription.v1beta1.Payload) |  |  |
+| state | [State](#subscription.v1beta1.State) |  |  |
 
 
 
@@ -218,8 +252,7 @@ Subscription is a subscription state
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [EventType](#subscription.v1beta1.EventType) |  |  |
-| subscription | [Subscription](#subscription.v1beta1.Subscription) |  |  |
+| event | [Event](#subscription.v1beta1.Event) |  |  |
 
 
 
@@ -254,15 +287,15 @@ EventType is a subscription event type
 
 
 
-<a name="subscription.v1beta1.State"></a>
+<a name="subscription.v1beta1.Status"></a>
 
-### State
-State is a subscription state
+### Status
+Status is a subscription status
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| INACTIVE | 0 | INACTIVE indicates the subscription is not currently active |
-| ACTIVE | 1 | ACTIVE indicates the subscription is active |
+| ALIVE | 0 |  |
+| PENDING_DELETE | 1 |  |
 
 
  
