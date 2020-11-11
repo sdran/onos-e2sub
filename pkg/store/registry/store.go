@@ -81,7 +81,7 @@ type Store interface {
 	List(ctx context.Context, ch chan<- *regapi.TerminationEndPoint) error
 
 	// Watch streams end-point events to the given channel
-	Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error
+	Watch(ctx context.Context, ch chan<- regapi.Event, opts ...WatchOption) error
 }
 
 // WatchOption is a configuration option for Watch calls
@@ -167,7 +167,7 @@ func (s *atomixStore) List(ctx context.Context, ch chan<- *regapi.TerminationEnd
 	return nil
 }
 
-func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...WatchOption) error {
+func (s *atomixStore) Watch(ctx context.Context, ch chan<- regapi.Event, opts ...WatchOption) error {
 	watchOpts := make([]_map.WatchOption, 0)
 	for _, opt := range opts {
 		watchOpts = opt.apply(watchOpts)
@@ -182,9 +182,18 @@ func (s *atomixStore) Watch(ctx context.Context, ch chan<- *Event, opts ...Watch
 		defer close(ch)
 		for event := range mapCh {
 			if endPoint, err := decodeObject(event.Entry); err == nil {
-				ch <- &Event{
-					Type:   EventType(event.Type),
-					Object: endPoint,
+				var eventType regapi.EventType
+				switch event.Type {
+				case _map.EventNone:
+					eventType = regapi.EventType_NONE
+				case _map.EventInserted:
+					eventType = regapi.EventType_ADDED
+				case _map.EventRemoved:
+					eventType = regapi.EventType_REMOVED
+				}
+				ch <- regapi.Event{
+					Type:     eventType,
+					EndPoint: *endPoint,
 				}
 			}
 		}

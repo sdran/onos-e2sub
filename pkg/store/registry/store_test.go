@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func validate(t *testing.T, ep *regapi.TerminationEndPoint, id string, ip string, port uint32) {
+func validate(t *testing.T, ep regapi.TerminationEndPoint, id string, ip string, port uint32) {
 	assert.Equal(t, regapi.ID(id), ep.ID)
 	assert.Equal(t, regapi.IP(ip), ep.IP)
 	assert.Equal(t, regapi.Port(port), ep.Port)
@@ -26,7 +26,7 @@ func TestStoreBasics(t *testing.T) {
 
 	ep, err := store.Get(ctx, "1")
 	assert.NoError(t, err)
-	validate(t, ep, "1", "10.10.10.1", 111)
+	validate(t, *ep, "1", "10.10.10.1", 111)
 
 	assert.NoError(t, store.Store(ctx, &regapi.TerminationEndPoint{ID: "2", IP: "10.10.10.2", Port: 222}))
 	assert.NoError(t, store.Store(ctx, &regapi.TerminationEndPoint{ID: "3", IP: "10.10.10.3", Port: 333}))
@@ -46,7 +46,7 @@ func TestStoreBasics(t *testing.T) {
 	assert.NoError(t, store.List(ctx, ch))
 	count = 0
 	for ep := range ch {
-		validate(t, ep, "2", "10.10.10.2", 222)
+		validate(t, *ep, "2", "10.10.10.2", 222)
 		count = count + 1
 	}
 	assert.Equal(t, 1, count)
@@ -59,31 +59,31 @@ func TestStoreWatch(t *testing.T) {
 
 	assert.NoError(t, store.Store(ctx, &regapi.TerminationEndPoint{ID: "1", IP: "10.10.10.1", Port: 111}))
 
-	ch := make(chan *Event)
+	ch := make(chan regapi.Event)
 	assert.NoError(t, store.Watch(ctx, ch, WithReplay()))
 
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
 		e := <-ch
-		assert.Equal(t, EventNone, e.Type)
-		validate(t, e.Object, "1", "10.10.10.1", 111)
+		assert.Equal(t, regapi.EventType_NONE, e.Type)
+		validate(t, e.EndPoint, "1", "10.10.10.1", 111)
 
 		e = <-ch
-		assert.Equal(t, EventInserted, e.Type)
-		validate(t, e.Object, "2", "10.10.10.2", 222)
+		assert.Equal(t, regapi.EventType_ADDED, e.Type)
+		validate(t, e.EndPoint, "2", "10.10.10.2", 222)
 
 		e = <-ch
-		assert.Equal(t, EventRemoved, e.Type)
-		validate(t, e.Object, "1", "10.10.10.1", 111)
+		assert.Equal(t, regapi.EventType_REMOVED, e.Type)
+		validate(t, e.EndPoint, "1", "10.10.10.1", 111)
 
 		e = <-ch
-		assert.Equal(t, EventInserted, e.Type)
-		validate(t, e.Object, "3", "10.10.10.3", 333)
+		assert.Equal(t, regapi.EventType_ADDED, e.Type)
+		validate(t, e.EndPoint, "3", "10.10.10.3", 333)
 
 		e = <-ch
-		assert.Equal(t, EventRemoved, e.Type)
-		validate(t, e.Object, "2", "10.10.10.2", 222)
+		assert.Equal(t, regapi.EventType_REMOVED, e.Type)
+		validate(t, e.EndPoint, "2", "10.10.10.2", 222)
 
 		wg.Done()
 		close(ch)

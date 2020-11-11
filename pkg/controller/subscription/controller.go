@@ -10,9 +10,9 @@ import (
 	endpointapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
 	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
-	"github.com/onosproject/onos-e2sub/pkg/northbound/registry"
-	"github.com/onosproject/onos-e2sub/pkg/northbound/subscription"
-	"github.com/onosproject/onos-e2sub/pkg/northbound/task"
+	"github.com/onosproject/onos-e2sub/pkg/store/registry"
+	"github.com/onosproject/onos-e2sub/pkg/store/subscription"
+	"github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
 	"time"
 

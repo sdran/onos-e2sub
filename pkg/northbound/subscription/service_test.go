@@ -7,6 +7,7 @@ package subscription
 import (
 	"context"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
+	store "github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -23,7 +24,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 }
 
 func newTestService() (northbound.Service, error) {
-	endPointStore, err := NewLocalStore()
+	endPointStore, err := store.NewLocalStore()
 	if err != nil {
 		return nil, err
 	}

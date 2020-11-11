@@ -7,6 +7,7 @@ package subscription
 import (
 	"context"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
+	store "github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"google.golang.org/grpc"
@@ -15,7 +16,7 @@ import (
 var log = logging.GetLogger("northbound", "ricapi", "subscription")
 
 // NewService creates a new subscription service
-func NewService(store Store) northbound.Service {
+func NewService(store store.Store) northbound.Service {
 	return &Service{
 		store: store,
 	}
@@ -23,7 +24,7 @@ func NewService(store Store) northbound.Service {
 
 // Service is a Service implementation for subscription service.
 type Service struct {
-	store Store
+	store store.Store
 }
 
 // Register registers the Service with the gRPC server.
@@ -38,7 +39,7 @@ var _ northbound.Service = &Service{}
 
 // Server implements the gRPC service for managing of subscriptions
 type Server struct {
-	subscriptionStore Store
+	subscriptionStore store.Store
 }
 
 // AddSubscription adds a subscription
@@ -118,9 +119,9 @@ func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscrip
 // WatchTerminations streams termination end-point changes
 func (s *Server) WatchSubscriptions(req *subapi.WatchSubscriptionsRequest, server subapi.E2SubscriptionService_WatchSubscriptionsServer) error {
 	log.Debugf("Received WatchTerminationsRequest %+v", req)
-	var watchOpts []WatchOption
+	var watchOpts []store.WatchOption
 	if !req.Noreplay {
-		watchOpts = append(watchOpts, WithReplay())
+		watchOpts = append(watchOpts, store.WithReplay())
 	}
 
 	ch := make(chan subapi.Event)

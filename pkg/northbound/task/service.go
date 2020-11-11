@@ -5,6 +5,7 @@
 package task
 
 import (
+	store "github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 )
@@ -18,7 +19,7 @@ import (
 var log = logging.GetLogger("northbound", "task")
 
 // NewService creates a new subscription service
-func NewService(store Store) northbound.Service {
+func NewService(store store.Store) northbound.Service {
 	return &Service{
 		store: store,
 	}
@@ -26,7 +27,7 @@ func NewService(store Store) northbound.Service {
 
 // Service is a Service implementation for subscription service.
 type Service struct {
-	store Store
+	store store.Store
 }
 
 // Register registers the Service with the gRPC server.
@@ -41,7 +42,7 @@ var _ northbound.Service = &Service{}
 
 // Server implements the gRPC service for managing of subscriptions
 type Server struct {
-	store Store
+	store store.Store
 }
 
 func (s *Server) GetSubscriptionTask(ctx context.Context, req *taskapi.GetSubscriptionTaskRequest) (*taskapi.GetSubscriptionTaskResponse, error) {
@@ -75,9 +76,9 @@ func (s *Server) ListSubscriptionTasks(ctx context.Context, req *taskapi.ListSub
 
 func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksRequest, server taskapi.E2SubscriptionTaskService_WatchSubscriptionTasksServer) error {
 	log.Debugf("Received WatchSubscriptionTasksRequest %+v", req)
-	var watchOpts []WatchOption
+	var watchOpts []store.WatchOption
 	if !req.Noreplay {
-		watchOpts = append(watchOpts, WithReplay())
+		watchOpts = append(watchOpts, store.WithReplay())
 	}
 
 	ch := make(chan taskapi.Event)

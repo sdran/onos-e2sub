@@ -8,6 +8,9 @@ import (
 	"github.com/onosproject/onos-e2sub/pkg/northbound/registry"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/task"
+	regstore "github.com/onosproject/onos-e2sub/pkg/store/registry"
+	substore "github.com/onosproject/onos-e2sub/pkg/store/subscription"
+	taskstore "github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 )
@@ -63,17 +66,17 @@ func (m *Manager) startNorthboundServer() error {
 		true,
 		northbound.SecurityConfig{}))
 
-	regStore, err := registry.NewAtomixStore()
+	regStore, err := regstore.NewAtomixStore()
 	if err != nil {
 		return err
 	}
 
-	subStore, err := subscription.NewAtomixStore()
+	subStore, err := substore.NewAtomixStore()
 	if err != nil {
 		return err
 	}
 
-	taskStore, err := task.NewAtomixStore()
+	taskStore, err := taskstore.NewAtomixStore()
 	if err != nil {
 		return err
 	}

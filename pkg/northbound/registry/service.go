@@ -7,6 +7,7 @@ package registry
 import (
 	"context"
 	regapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
+	store "github.com/onosproject/onos-e2sub/pkg/store/registry"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"google.golang.org/grpc"
@@ -15,7 +16,7 @@ import (
 var log = logging.GetLogger("northbound", "ricapi", "registry")
 
 // NewService creates a new registry service
-func NewService(store Store) northbound.Service {
+func NewService(store store.Store) northbound.Service {
 	return &Service{
 		store: store,
 	}
@@ -23,7 +24,7 @@ func NewService(store Store) northbound.Service {
 
 // Service is a Service implementation for subscription service.
 type Service struct {
-	store Store
+	store store.Store
 }
 
 // Register registers the Service with the gRPC server.
@@ -38,7 +39,7 @@ var _ northbound.Service = &Service{}
 
 // Server implements the gRPC service for managing of subscriptions
 type Server struct {
-	endPointStore Store
+	endPointStore store.Store
 }
 
 // E2RegistryClientFactory : Default E2RegistryClientFactory creation.
@@ -118,12 +119,12 @@ func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminati
 // WatchTerminations streams termination end-point changes
 func (s *Server) WatchTerminations(req *regapi.WatchTerminationsRequest, server regapi.E2RegistryService_WatchTerminationsServer) error {
 	log.Debugf("Received WatchTerminationsRequest %+v", req)
-	var watchOpts []WatchOption
+	var watchOpts []store.WatchOption
 	if !req.Noreplay {
-		watchOpts = append(watchOpts, WithReplay())
+		watchOpts = append(watchOpts, store.WithReplay())
 	}
 
-	ch := make(chan *Event)
+	ch := make(chan regapi.Event)
 	if err := s.endPointStore.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchTerminationsRequest %+v failed: %v", req, err)
 		return err
@@ -133,20 +134,10 @@ func (s *Server) WatchTerminations(req *regapi.WatchTerminationsRequest, server 
 }
 
 // Stream is the ongoing stream for WatchTerminations request
-func (s *Server) Stream(server regapi.E2RegistryService_WatchTerminationsServer, ch chan *Event) error {
+func (s *Server) Stream(server regapi.E2RegistryService_WatchTerminationsServer, ch chan regapi.Event) error {
 	for event := range ch {
-		var t regapi.EventType
-		switch event.Type {
-		case EventNone:
-			t = regapi.EventType_NONE
-		case EventInserted:
-			t = regapi.EventType_ADDED
-		case EventRemoved:
-			t = regapi.EventType_REMOVED
-		}
-
 		res := &regapi.WatchTerminationsResponse{
-			Event: regapi.Event{Type: t, EndPoint: *event.Object},
+			Event: event,
 		}
 
 		log.Debugf("Sending WatchTerminationsResponse %+v", res)
