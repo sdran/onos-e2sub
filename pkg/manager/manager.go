@@ -5,6 +5,7 @@
 package manager
 
 import (
+	subctrl "github.com/onosproject/onos-e2sub/pkg/controller/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/registry"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/task"
@@ -77,6 +78,12 @@ func (m *Manager) startNorthboundServer() error {
 	}
 
 	taskStore, err := taskstore.NewAtomixStore()
+	if err != nil {
+		return err
+	}
+
+	subController := subctrl.NewController(subStore, regStore, taskStore)
+	err = subController.Start()
 	if err != nil {
 		return err
 	}
