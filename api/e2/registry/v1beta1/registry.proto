@@ -44,6 +44,13 @@ enum EventType {
     REMOVED = 3;
 }
 
+// Event is an end-point event
+message Event {
+    EventType type = 1;
+    TerminationEndPoint end_point = 2 [(gogoproto.nullable) = false];
+}
+
+
 // AddTerminationRequest is a request for adding a new termination point
 message AddTerminationRequest {
     TerminationEndPoint end_point = 1;
@@ -88,6 +95,5 @@ message WatchTerminationsRequest {
 
 // WatchTerminationsResponse is a response indicating a change in the available E2 termination end-points.
 message WatchTerminationsResponse {
-    EventType type = 1;
-    TerminationEndPoint end_point = 2 [(gogoproto.nullable) = false];
+    Event event = 1 [(gogoproto.nullable) = false];
 }

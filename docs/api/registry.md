@@ -6,6 +6,7 @@
 - [api/e2/registry/v1beta1/registry.proto](#api/e2/registry/v1beta1/registry.proto)
     - [AddTerminationRequest](#registry.v1beta1.AddTerminationRequest)
     - [AddTerminationResponse](#registry.v1beta1.AddTerminationResponse)
+    - [Event](#registry.v1beta1.Event)
     - [GetTerminationRequest](#registry.v1beta1.GetTerminationRequest)
     - [GetTerminationResponse](#registry.v1beta1.GetTerminationResponse)
     - [ListTerminationsRequest](#registry.v1beta1.ListTerminationsRequest)
@@ -50,6 +51,22 @@ AddTerminationRequest is a request for adding a new termination point
 
 ### AddTerminationResponse
 AddTerminationResponse is a response to adding a new termination point
+
+
+
+
+
+
+<a name="registry.v1beta1.Event"></a>
+
+### Event
+Event is an end-point event
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [EventType](#registry.v1beta1.EventType) |  |  |
+| end_point | [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint) |  |  |
 
 
 
@@ -177,8 +194,7 @@ WatchTerminationsResponse is a response indicating a change in the available E2 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [EventType](#registry.v1beta1.EventType) |  |  |
-| end_point | [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint) |  |  |
+| event | [Event](#registry.v1beta1.Event) |  |  |
 
 
 

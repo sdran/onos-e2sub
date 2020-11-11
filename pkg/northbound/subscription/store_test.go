@@ -30,11 +30,11 @@ func TestSubscriptionStore(t *testing.T) {
 
 	sub1 := &subapi.Subscription{
 		ID:    "subscription-1",
-		AppID: subapi.AppID(1),
+		AppID: subapi.AppID("1"),
 	}
 	sub2 := &subapi.Subscription{
 		ID:    "subscription-2",
-		AppID: subapi.AppID(2),
+		AppID: subapi.AppID("2"),
 	}
 
 	// Create a new subscription
@@ -117,7 +117,7 @@ func TestSubscriptionStore(t *testing.T) {
 
 	sub := &subapi.Subscription{
 		ID:    "subscription-1",
-		AppID: subapi.AppID(1),
+		AppID: subapi.AppID("1"),
 	}
 
 	err = store1.Create(context.TODO(), sub)
@@ -125,7 +125,7 @@ func TestSubscriptionStore(t *testing.T) {
 
 	sub = &subapi.Subscription{
 		ID:    "subscription-2",
-		AppID: subapi.AppID(2),
+		AppID: subapi.AppID("2"),
 	}
 
 	err = store1.Create(context.TODO(), sub)

@@ -111,21 +111,21 @@ func TestWatchBasics(t *testing.T) {
 	var pause sync.WaitGroup
 	pause.Add(1)
 	go func() {
-		e, err := res.Recv()
+		wr, err := res.Recv()
 		assert.NoError(t, err)
-		assert.Equal(t, regapi.EventType_NONE, e.Type)
-		assert.Equal(t, regapi.ID("1"), e.EndPoint.ID)
+		assert.Equal(t, regapi.EventType_NONE, wr.Event.Type)
+		assert.Equal(t, regapi.ID("1"), wr.Event.EndPoint.ID)
 		pause.Done()
 
-		e, err = res.Recv()
+		wr, err = res.Recv()
 		assert.NoError(t, err)
-		assert.Equal(t, regapi.EventType_ADDED, e.Type)
-		assert.Equal(t, regapi.ID("2"), e.EndPoint.ID)
+		assert.Equal(t, regapi.EventType_ADDED, wr.Event.Type)
+		assert.Equal(t, regapi.ID("2"), wr.Event.EndPoint.ID)
 
-		e, err = res.Recv()
+		wr, err = res.Recv()
 		assert.NoError(t, err)
-		assert.Equal(t, regapi.EventType_REMOVED, e.Type)
-		assert.Equal(t, regapi.ID("1"), e.EndPoint.ID)
+		assert.Equal(t, regapi.EventType_REMOVED, wr.Event.Type)
+		assert.Equal(t, regapi.ID("1"), wr.Event.EndPoint.ID)
 
 		wg.Done()
 	}()

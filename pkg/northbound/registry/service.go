@@ -146,8 +146,7 @@ func (s *Server) Stream(server regapi.E2RegistryService_WatchTerminationsServer,
 		}
 
 		res := &regapi.WatchTerminationsResponse{
-			Type:     t,
-			EndPoint: *event.Object,
+			Event: regapi.Event{Type: t, EndPoint: *event.Object},
 		}
 
 		log.Debugf("Sending WatchTerminationsResponse %+v", res)
