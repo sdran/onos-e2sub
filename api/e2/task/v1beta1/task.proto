@@ -22,12 +22,12 @@ service E2SubscriptionTaskService {
     // WatchSubscriptionTasks returns a stream of changes in the set of available E2 Tasks.
     rpc WatchSubscriptionTasks (WatchSubscriptionTasksRequest) returns (stream WatchSubscriptionTasksResponse);
 
-    // UpdateSubscriptionTaskState updates a task state
-    rpc UpdateSubscriptionTaskState (UpdateSubscriptionTaskStateRequest) returns (UpdateSubscriptionTaskStateResponse);
+    // UpdateSubscriptionTask updates a task status
+    rpc UpdateSubscriptionTask (UpdateSubscriptionTaskRequest) returns (UpdateSubscriptionTaskResponse);
 }
 
-// State is a subscription task state
-message State {
+// Lifecycle is a subscription task status
+message Lifecycle {
     Phase phase = 1;
     Status status = 2;
 }
@@ -54,7 +54,7 @@ message SubscriptionTask {
     uint64 revision = 2 [(gogoproto.casttype) = "Revision"];
     string subscription_id = 3 [(gogoproto.customname) = "SubscriptionID", (gogoproto.casttype) = "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1.ID"];
     string termination_endpoint_id = 4 [(gogoproto.customname) = "TerminationEndpointID", (gogoproto.casttype) = "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1.ID"];
-    State state = 5 [(gogoproto.nullable) = false];
+    Lifecycle lifecycle = 5 [(gogoproto.nullable) = false];
 }
 
 // Type of change
@@ -100,11 +100,11 @@ message WatchSubscriptionTasksResponse {
     Event event = 1 [(gogoproto.nullable) = false];
 }
 
-// UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask state
-message UpdateSubscriptionTaskStateRequest {
+// UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask status
+message UpdateSubscriptionTaskRequest {
     SubscriptionTask task = 1;
 }
 
-// UpdateSubscriptionTaskResponse is a response to updating a SubscriptionTask state
-message UpdateSubscriptionTaskStateResponse {
+// UpdateSubscriptionTaskResponse is a response to updating a SubscriptionTask status
+message UpdateSubscriptionTaskResponse {
 }

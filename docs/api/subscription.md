@@ -9,13 +9,13 @@
     - [Event](#subscription.v1beta1.Event)
     - [GetSubscriptionRequest](#subscription.v1beta1.GetSubscriptionRequest)
     - [GetSubscriptionResponse](#subscription.v1beta1.GetSubscriptionResponse)
+    - [Lifecycle](#subscription.v1beta1.Lifecycle)
     - [ListSubscriptionsRequest](#subscription.v1beta1.ListSubscriptionsRequest)
     - [ListSubscriptionsResponse](#subscription.v1beta1.ListSubscriptionsResponse)
     - [Payload](#subscription.v1beta1.Payload)
     - [RemoveSubscriptionRequest](#subscription.v1beta1.RemoveSubscriptionRequest)
     - [RemoveSubscriptionResponse](#subscription.v1beta1.RemoveSubscriptionResponse)
     - [ServiceModel](#subscription.v1beta1.ServiceModel)
-    - [State](#subscription.v1beta1.State)
     - [Subscription](#subscription.v1beta1.Subscription)
     - [WatchSubscriptionsRequest](#subscription.v1beta1.WatchSubscriptionsRequest)
     - [WatchSubscriptionsResponse](#subscription.v1beta1.WatchSubscriptionsResponse)
@@ -113,6 +113,21 @@ Event is a subscription event
 
 
 
+<a name="subscription.v1beta1.Lifecycle"></a>
+
+### Lifecycle
+Lifecycle is the subscription lifecycle
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [Status](#subscription.v1beta1.Status) |  |  |
+
+
+
+
+
+
 <a name="subscription.v1beta1.ListSubscriptionsRequest"></a>
 
 ### ListSubscriptionsRequest
@@ -194,21 +209,6 @@ ServiceModel is a service model definition
 
 
 
-<a name="subscription.v1beta1.State"></a>
-
-### State
-State is the subscription state
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| status | [Status](#subscription.v1beta1.Status) |  |  |
-
-
-
-
-
-
 <a name="subscription.v1beta1.Subscription"></a>
 
 ### Subscription
@@ -220,9 +220,10 @@ Subscription is a subscription state
 | id | [string](#string) |  |  |
 | revision | [uint64](#uint64) |  |  |
 | app_id | [string](#string) |  |  |
+| e2_node_id | [uint64](#uint64) |  |  |
 | service_model | [ServiceModel](#subscription.v1beta1.ServiceModel) |  |  |
 | payload | [Payload](#subscription.v1beta1.Payload) |  |  |
-| state | [State](#subscription.v1beta1.State) |  |  |
+| lifecycle | [Lifecycle](#subscription.v1beta1.Lifecycle) |  |  |
 
 
 
@@ -294,7 +295,7 @@ Status is a subscription status
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| ALIVE | 0 |  |
+| ACTIVE | 0 |  |
 | PENDING_DELETE | 1 |  |
 
 

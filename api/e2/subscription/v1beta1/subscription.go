@@ -13,5 +13,8 @@ type Revision uint64
 // AppID is an application identifier
 type AppID string
 
+// E2NodeID is an E2 node identifier
+type E2NodeID uint64
+
 // ServiceModelID is a service model identifier
 type ServiceModelID string

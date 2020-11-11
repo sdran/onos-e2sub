@@ -100,14 +100,14 @@ func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksReque
 	return nil
 }
 
-func (s *Server) UpdateSubscriptionTaskState(ctx context.Context, req *taskapi.UpdateSubscriptionTaskStateRequest) (*taskapi.UpdateSubscriptionTaskStateResponse, error) {
-	log.Debugf("Received UpdateSubscriptionTaskStateRequest %+v", req)
+func (s *Server) UpdateSubscriptionTask(ctx context.Context, req *taskapi.UpdateSubscriptionTaskRequest) (*taskapi.UpdateSubscriptionTaskResponse, error) {
+	log.Debugf("Received UpdateSubscriptionTaskRequest %+v", req)
 	err := s.store.Update(ctx, req.Task)
 	if err != nil {
-		log.Warnf("UpdateSubscriptionTaskStateRequest %+v failed: %v", req, err)
+		log.Warnf("UpdateSubscriptionTaskRequest %+v failed: %v", req, err)
 		return nil, err
 	}
-	res := &taskapi.UpdateSubscriptionTaskStateResponse{}
-	log.Debugf("Sending UpdateSubscriptionTaskStateResponse %+v", res)
+	res := &taskapi.UpdateSubscriptionTaskResponse{}
+	log.Debugf("Sending UpdateSubscriptionTaskResponse %+v", res)
 	return res, nil
 }

@@ -61,7 +61,7 @@ func TestSubscriptionStore(t *testing.T) {
 	assert.Equal(t, taskapi.ID("task-2"), taskEvent.ID)
 
 	// Update one of the tasks
-	task2.State.Status = taskapi.Status_COMPLETE
+	task2.Lifecycle.Status = taskapi.Status_COMPLETE
 	revision := task2.Revision
 	err = store1.Update(context.TODO(), task2)
 	assert.NoError(t, err)
@@ -71,8 +71,8 @@ func TestSubscriptionStore(t *testing.T) {
 	task2, err = store2.Get(context.TODO(), "task-2")
 	assert.NoError(t, err)
 	assert.NotNil(t, task2)
-	task2.State.Phase = taskapi.Phase_CLOSE
-	task2.State.Status = taskapi.Status_PENDING
+	task2.Lifecycle.Phase = taskapi.Phase_CLOSE
+	task2.Lifecycle.Status = taskapi.Status_PENDING
 	revision = task2.Revision
 	err = store1.Update(context.TODO(), task2)
 	assert.NoError(t, err)
@@ -84,13 +84,13 @@ func TestSubscriptionStore(t *testing.T) {
 	task12, err := store2.Get(context.TODO(), "task-1")
 	assert.NoError(t, err)
 
-	task11.State.Phase = taskapi.Phase_CLOSE
-	task11.State.Status = taskapi.Status_PENDING
+	task11.Lifecycle.Phase = taskapi.Phase_CLOSE
+	task11.Lifecycle.Status = taskapi.Status_PENDING
 	err = store1.Update(context.TODO(), task11)
 	assert.NoError(t, err)
 
-	task12.State.Phase = taskapi.Phase_CLOSE
-	task12.State.Status = taskapi.Status_PENDING
+	task12.Lifecycle.Phase = taskapi.Phase_CLOSE
+	task12.Lifecycle.Status = taskapi.Status_PENDING
 	err = store2.Update(context.TODO(), task12)
 	assert.Error(t, err)
 

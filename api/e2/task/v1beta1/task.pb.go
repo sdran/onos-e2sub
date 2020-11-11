@@ -119,24 +119,24 @@ func (EventType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_97a5e164775eadd8, []int{2}
 }
 
-// State is a subscription task state
-type State struct {
+// Lifecycle is a subscription task status
+type Lifecycle struct {
 	Phase  Phase  `protobuf:"varint,1,opt,name=phase,proto3,enum=task.v1beta1.Phase" json:"phase,omitempty"`
 	Status Status `protobuf:"varint,2,opt,name=status,proto3,enum=task.v1beta1.Status" json:"status,omitempty"`
 }
 
-func (m *State) Reset()         { *m = State{} }
-func (m *State) String() string { return proto.CompactTextString(m) }
-func (*State) ProtoMessage()    {}
-func (*State) Descriptor() ([]byte, []int) {
+func (m *Lifecycle) Reset()         { *m = Lifecycle{} }
+func (m *Lifecycle) String() string { return proto.CompactTextString(m) }
+func (*Lifecycle) ProtoMessage()    {}
+func (*Lifecycle) Descriptor() ([]byte, []int) {
 	return fileDescriptor_97a5e164775eadd8, []int{0}
 }
-func (m *State) XXX_Unmarshal(b []byte) error {
+func (m *Lifecycle) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *State) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *Lifecycle) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_State.Marshal(b, m, deterministic)
+		return xxx_messageInfo_Lifecycle.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -146,26 +146,26 @@ func (m *State) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *State) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_State.Merge(m, src)
+func (m *Lifecycle) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Lifecycle.Merge(m, src)
 }
-func (m *State) XXX_Size() int {
+func (m *Lifecycle) XXX_Size() int {
 	return m.Size()
 }
-func (m *State) XXX_DiscardUnknown() {
-	xxx_messageInfo_State.DiscardUnknown(m)
+func (m *Lifecycle) XXX_DiscardUnknown() {
+	xxx_messageInfo_Lifecycle.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_State proto.InternalMessageInfo
+var xxx_messageInfo_Lifecycle proto.InternalMessageInfo
 
-func (m *State) GetPhase() Phase {
+func (m *Lifecycle) GetPhase() Phase {
 	if m != nil {
 		return m.Phase
 	}
 	return Phase_OPEN
 }
 
-func (m *State) GetStatus() Status {
+func (m *Lifecycle) GetStatus() Status {
 	if m != nil {
 		return m.Status
 	}
@@ -178,7 +178,7 @@ type SubscriptionTask struct {
 	Revision              Revision                                                         `protobuf:"varint,2,opt,name=revision,proto3,casttype=Revision" json:"revision,omitempty"`
 	SubscriptionID        github_com_onosproject_onos_e2sub_api_e2_subscription_v1beta1.ID `protobuf:"bytes,3,opt,name=subscription_id,json=subscriptionId,proto3,casttype=github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1.ID" json:"subscription_id,omitempty"`
 	TerminationEndpointID github_com_onosproject_onos_e2sub_api_e2_registry_v1beta1.ID     `protobuf:"bytes,4,opt,name=termination_endpoint_id,json=terminationEndpointId,proto3,casttype=github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1.ID" json:"termination_endpoint_id,omitempty"`
-	State                 State                                                            `protobuf:"bytes,5,opt,name=state,proto3" json:"state"`
+	Lifecycle             Lifecycle                                                        `protobuf:"bytes,5,opt,name=lifecycle,proto3" json:"lifecycle"`
 }
 
 func (m *SubscriptionTask) Reset()         { *m = SubscriptionTask{} }
@@ -242,11 +242,11 @@ func (m *SubscriptionTask) GetTerminationEndpointID() github_com_onosproject_ono
 	return ""
 }
 
-func (m *SubscriptionTask) GetState() State {
+func (m *SubscriptionTask) GetLifecycle() Lifecycle {
 	if m != nil {
-		return m.State
+		return m.Lifecycle
 	}
-	return State{}
+	return Lifecycle{}
 }
 
 // Event is a SubscriptionTask event
@@ -564,23 +564,23 @@ func (m *WatchSubscriptionTasksResponse) GetEvent() Event {
 	return Event{}
 }
 
-// UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask state
-type UpdateSubscriptionTaskStateRequest struct {
+// UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask status
+type UpdateSubscriptionTaskRequest struct {
 	Task *SubscriptionTask `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
 }
 
-func (m *UpdateSubscriptionTaskStateRequest) Reset()         { *m = UpdateSubscriptionTaskStateRequest{} }
-func (m *UpdateSubscriptionTaskStateRequest) String() string { return proto.CompactTextString(m) }
-func (*UpdateSubscriptionTaskStateRequest) ProtoMessage()    {}
-func (*UpdateSubscriptionTaskStateRequest) Descriptor() ([]byte, []int) {
+func (m *UpdateSubscriptionTaskRequest) Reset()         { *m = UpdateSubscriptionTaskRequest{} }
+func (m *UpdateSubscriptionTaskRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdateSubscriptionTaskRequest) ProtoMessage()    {}
+func (*UpdateSubscriptionTaskRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_97a5e164775eadd8, []int{9}
 }
-func (m *UpdateSubscriptionTaskStateRequest) XXX_Unmarshal(b []byte) error {
+func (m *UpdateSubscriptionTaskRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UpdateSubscriptionTaskStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UpdateSubscriptionTaskRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UpdateSubscriptionTaskStateRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UpdateSubscriptionTaskRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -590,41 +590,41 @@ func (m *UpdateSubscriptionTaskStateRequest) XXX_Marshal(b []byte, deterministic
 		return b[:n], nil
 	}
 }
-func (m *UpdateSubscriptionTaskStateRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateSubscriptionTaskStateRequest.Merge(m, src)
+func (m *UpdateSubscriptionTaskRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateSubscriptionTaskRequest.Merge(m, src)
 }
-func (m *UpdateSubscriptionTaskStateRequest) XXX_Size() int {
+func (m *UpdateSubscriptionTaskRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *UpdateSubscriptionTaskStateRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateSubscriptionTaskStateRequest.DiscardUnknown(m)
+func (m *UpdateSubscriptionTaskRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateSubscriptionTaskRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UpdateSubscriptionTaskStateRequest proto.InternalMessageInfo
+var xxx_messageInfo_UpdateSubscriptionTaskRequest proto.InternalMessageInfo
 
-func (m *UpdateSubscriptionTaskStateRequest) GetTask() *SubscriptionTask {
+func (m *UpdateSubscriptionTaskRequest) GetTask() *SubscriptionTask {
 	if m != nil {
 		return m.Task
 	}
 	return nil
 }
 
-// UpdateSubscriptionTaskResponse is a response to updating a SubscriptionTask state
-type UpdateSubscriptionTaskStateResponse struct {
+// UpdateSubscriptionTaskResponse is a response to updating a SubscriptionTask status
+type UpdateSubscriptionTaskResponse struct {
 }
 
-func (m *UpdateSubscriptionTaskStateResponse) Reset()         { *m = UpdateSubscriptionTaskStateResponse{} }
-func (m *UpdateSubscriptionTaskStateResponse) String() string { return proto.CompactTextString(m) }
-func (*UpdateSubscriptionTaskStateResponse) ProtoMessage()    {}
-func (*UpdateSubscriptionTaskStateResponse) Descriptor() ([]byte, []int) {
+func (m *UpdateSubscriptionTaskResponse) Reset()         { *m = UpdateSubscriptionTaskResponse{} }
+func (m *UpdateSubscriptionTaskResponse) String() string { return proto.CompactTextString(m) }
+func (*UpdateSubscriptionTaskResponse) ProtoMessage()    {}
+func (*UpdateSubscriptionTaskResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_97a5e164775eadd8, []int{10}
 }
-func (m *UpdateSubscriptionTaskStateResponse) XXX_Unmarshal(b []byte) error {
+func (m *UpdateSubscriptionTaskResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UpdateSubscriptionTaskStateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UpdateSubscriptionTaskResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UpdateSubscriptionTaskStateResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UpdateSubscriptionTaskResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -634,23 +634,23 @@ func (m *UpdateSubscriptionTaskStateResponse) XXX_Marshal(b []byte, deterministi
 		return b[:n], nil
 	}
 }
-func (m *UpdateSubscriptionTaskStateResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateSubscriptionTaskStateResponse.Merge(m, src)
+func (m *UpdateSubscriptionTaskResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateSubscriptionTaskResponse.Merge(m, src)
 }
-func (m *UpdateSubscriptionTaskStateResponse) XXX_Size() int {
+func (m *UpdateSubscriptionTaskResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *UpdateSubscriptionTaskStateResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateSubscriptionTaskStateResponse.DiscardUnknown(m)
+func (m *UpdateSubscriptionTaskResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateSubscriptionTaskResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UpdateSubscriptionTaskStateResponse proto.InternalMessageInfo
+var xxx_messageInfo_UpdateSubscriptionTaskResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterEnum("task.v1beta1.Phase", Phase_name, Phase_value)
 	proto.RegisterEnum("task.v1beta1.Status", Status_name, Status_value)
 	proto.RegisterEnum("task.v1beta1.EventType", EventType_name, EventType_value)
-	proto.RegisterType((*State)(nil), "task.v1beta1.State")
+	proto.RegisterType((*Lifecycle)(nil), "task.v1beta1.Lifecycle")
 	proto.RegisterType((*SubscriptionTask)(nil), "task.v1beta1.SubscriptionTask")
 	proto.RegisterType((*Event)(nil), "task.v1beta1.Event")
 	proto.RegisterType((*GetSubscriptionTaskRequest)(nil), "task.v1beta1.GetSubscriptionTaskRequest")
@@ -659,61 +659,61 @@ func init() {
 	proto.RegisterType((*ListSubscriptionTasksResponse)(nil), "task.v1beta1.ListSubscriptionTasksResponse")
 	proto.RegisterType((*WatchSubscriptionTasksRequest)(nil), "task.v1beta1.WatchSubscriptionTasksRequest")
 	proto.RegisterType((*WatchSubscriptionTasksResponse)(nil), "task.v1beta1.WatchSubscriptionTasksResponse")
-	proto.RegisterType((*UpdateSubscriptionTaskStateRequest)(nil), "task.v1beta1.UpdateSubscriptionTaskStateRequest")
-	proto.RegisterType((*UpdateSubscriptionTaskStateResponse)(nil), "task.v1beta1.UpdateSubscriptionTaskStateResponse")
+	proto.RegisterType((*UpdateSubscriptionTaskRequest)(nil), "task.v1beta1.UpdateSubscriptionTaskRequest")
+	proto.RegisterType((*UpdateSubscriptionTaskResponse)(nil), "task.v1beta1.UpdateSubscriptionTaskResponse")
 }
 
 func init() { proto.RegisterFile("api/e2/task/v1beta1/task.proto", fileDescriptor_97a5e164775eadd8) }
 
 var fileDescriptor_97a5e164775eadd8 = []byte{
-	// 747 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x55, 0xcf, 0x4f, 0x1a, 0x5b,
-	0x14, 0x66, 0x80, 0xf1, 0xe1, 0x91, 0xf8, 0xc8, 0x55, 0x9f, 0x3c, 0xd4, 0xc1, 0x8c, 0x79, 0x09,
-	0xfe, 0x78, 0x8c, 0xd2, 0x8d, 0x69, 0x5d, 0xb4, 0xc8, 0xc4, 0x90, 0x28, 0xe0, 0x80, 0xb6, 0xae,
-	0xda, 0x01, 0x6e, 0xf0, 0x6a, 0x9d, 0x99, 0xce, 0xbd, 0x90, 0xb0, 0x6a, 0xd2, 0xbf, 0xa0, 0xfd,
-	0x0f, 0xfa, 0xe7, 0xb8, 0x74, 0xd9, 0x15, 0x69, 0xf0, 0x6f, 0xe8, 0xc6, 0x55, 0x33, 0x97, 0x0b,
-	0x05, 0x04, 0x8a, 0xdd, 0x90, 0x39, 0x9c, 0xef, 0x7c, 0xdf, 0xc7, 0x39, 0x5f, 0x06, 0x50, 0x4c,
-	0x87, 0x68, 0x38, 0xa5, 0x31, 0x93, 0x5e, 0x6b, 0x8d, 0xbd, 0x32, 0x66, 0xe6, 0x1e, 0x2f, 0x92,
-	0x8e, 0x6b, 0x33, 0x1b, 0x85, 0xf9, 0xb3, 0x68, 0xc4, 0x16, 0x6b, 0x76, 0xcd, 0xe6, 0x0d, 0xcd,
-	0x7b, 0xea, 0x60, 0xd4, 0x77, 0x20, 0x17, 0x99, 0xc9, 0x30, 0xda, 0x04, 0xd9, 0xb9, 0x34, 0x29,
-	0x8e, 0x4a, 0xeb, 0x52, 0x62, 0x3e, 0xb5, 0x90, 0xec, 0x1f, 0x4e, 0x16, 0xbc, 0x96, 0xd1, 0x41,
-	0xa0, 0x1d, 0x98, 0xa1, 0xcc, 0x64, 0x75, 0x1a, 0xf5, 0x73, 0xec, 0xe2, 0x20, 0xb6, 0xc8, 0x7b,
-	0x86, 0xc0, 0xa8, 0x5f, 0x03, 0x10, 0x29, 0xd6, 0xcb, 0xb4, 0xe2, 0x12, 0x87, 0x11, 0xdb, 0x2a,
-	0x99, 0xf4, 0x1a, 0xad, 0x82, 0x9f, 0x54, 0xb9, 0xd4, 0x6c, 0x3a, 0xdc, 0x6e, 0xc5, 0xfd, 0xd9,
-	0xcc, 0x03, 0xff, 0x34, 0xfc, 0xa4, 0x8a, 0x12, 0x10, 0x72, 0x71, 0x83, 0x50, 0x62, 0x5b, 0x5c,
-	0x22, 0x98, 0x0e, 0x3f, 0xb4, 0xe2, 0x21, 0x43, 0x7c, 0x67, 0xf4, 0xba, 0xe8, 0x23, 0xfc, 0x4d,
-	0xfb, 0xb8, 0xdf, 0x92, 0x6a, 0x34, 0xc0, 0x49, 0xcf, 0xdb, 0xad, 0xf8, 0x7c, 0xbf, 0x2c, 0x17,
-	0x78, 0x59, 0x23, 0xec, 0xb2, 0x5e, 0x4e, 0x56, 0xec, 0x1b, 0xcd, 0xb6, 0x6c, 0xea, 0xb8, 0xf6,
-	0x15, 0xae, 0x30, 0xfe, 0xfc, 0x3f, 0x4e, 0xd1, 0x7a, 0x59, 0x13, 0x3b, 0xed, 0x67, 0xed, 0xee,
-	0x36, 0x99, 0xcd, 0x18, 0xf3, 0xfd, 0x8d, 0x6c, 0x15, 0x7d, 0x91, 0x60, 0x99, 0x61, 0xf7, 0x86,
-	0x58, 0x26, 0x37, 0x80, 0xad, 0xaa, 0x63, 0x13, 0x8b, 0x79, 0x4e, 0x82, 0xdc, 0xc9, 0x45, 0xbb,
-	0x15, 0x5f, 0x2a, 0xfd, 0x82, 0xe8, 0x02, 0xc1, 0x0d, 0x1d, 0x4c, 0x6d, 0xc8, 0xc5, 0x35, 0x42,
-	0x99, 0xdb, 0xec, 0x37, 0xb3, 0xc4, 0x46, 0xd0, 0x56, 0x91, 0x06, 0xb2, 0xb7, 0x7b, 0x1c, 0x95,
-	0xd7, 0xa5, 0xc4, 0xdc, 0xf0, 0x29, 0xf9, 0xb9, 0xd3, 0xc1, 0xdb, 0x56, 0xdc, 0x67, 0x74, 0x70,
-	0xaa, 0x05, 0xb2, 0xde, 0xc0, 0x16, 0x43, 0xdb, 0x10, 0x64, 0x4d, 0xa7, 0x9b, 0x81, 0xe5, 0xc1,
-	0x41, 0x0e, 0x29, 0x35, 0x1d, 0x6c, 0x70, 0x10, 0xda, 0x87, 0xa0, 0xd7, 0xe7, 0x17, 0x9a, 0x4b,
-	0x29, 0x43, 0x2a, 0x43, 0x17, 0x17, 0x82, 0x7c, 0x42, 0x7d, 0x0e, 0xb1, 0x23, 0xcc, 0x86, 0x21,
-	0x06, 0xfe, 0x50, 0xc7, 0x94, 0x4d, 0xce, 0x86, 0x7a, 0x0a, 0x2b, 0x23, 0x67, 0xa9, 0x63, 0x5b,
-	0x14, 0xa3, 0x94, 0x30, 0x25, 0x4d, 0x63, 0x4a, 0xd8, 0x51, 0x60, 0xf5, 0x98, 0xd0, 0x47, 0x9c,
-	0x54, 0x18, 0x52, 0x2f, 0x60, 0x6d, 0x4c, 0x5f, 0x88, 0xee, 0xf7, 0x44, 0x03, 0x4f, 0xdc, 0xc4,
-	0x0b, 0x58, 0x7b, 0x6d, 0xb2, 0xca, 0xe5, 0x38, 0x6d, 0x14, 0x83, 0x90, 0x65, 0xbb, 0xd8, 0x79,
-	0x6f, 0x36, 0xf9, 0x6f, 0x0a, 0x19, 0xbd, 0x5a, 0x3d, 0x05, 0x65, 0xdc, 0xb0, 0x30, 0xa6, 0x81,
-	0x8c, 0xbd, 0xab, 0x89, 0x75, 0x2c, 0x8c, 0x38, 0x68, 0x37, 0x09, 0x1c, 0xa7, 0xbe, 0x01, 0xf5,
-	0xcc, 0xa9, 0x9a, 0x0c, 0x0f, 0x73, 0xf2, 0xd4, 0x74, 0x4d, 0xfd, 0xc9, 0x92, 0xff, 0x83, 0x8d,
-	0x89, 0xcc, 0x1d, 0xc7, 0x5b, 0xab, 0x20, 0xf3, 0x77, 0x0d, 0x0a, 0x41, 0x30, 0x5f, 0xd0, 0x73,
-	0x11, 0x1f, 0x9a, 0x05, 0xf9, 0xf0, 0x38, 0x5f, 0xd4, 0x23, 0xd2, 0xd6, 0x06, 0xcc, 0x74, 0xde,
-	0x2e, 0x68, 0x0e, 0xfe, 0x2a, 0xe8, 0xb9, 0x4c, 0x36, 0x77, 0x14, 0xf1, 0xa1, 0x30, 0x84, 0x0e,
-	0xf3, 0x27, 0x85, 0x63, 0xbd, 0xe4, 0x81, 0x0e, 0x60, 0xb6, 0x17, 0x55, 0x8f, 0x26, 0x97, 0xcf,
-	0xe9, 0x11, 0x9f, 0x37, 0x71, 0x68, 0xe8, 0xaf, 0x4a, 0x7a, 0x26, 0x22, 0x79, 0xc5, 0x59, 0x21,
-	0xc3, 0x0b, 0xbf, 0x57, 0x18, 0xfa, 0x49, 0xfe, 0x5c, 0xcf, 0x44, 0x02, 0xa9, 0x1f, 0x01, 0xf8,
-	0x57, 0x4f, 0x3d, 0x32, 0x89, 0xdd, 0x06, 0xa9, 0x60, 0x74, 0x05, 0x0b, 0x23, 0xd2, 0x87, 0x12,
-	0x83, 0x2b, 0x18, 0x1f, 0xee, 0xd8, 0xe6, 0x14, 0x48, 0x71, 0x3c, 0x07, 0x96, 0x46, 0xc6, 0x0e,
-	0x6d, 0x0d, 0x72, 0x4c, 0xca, 0x6e, 0x6c, 0x7b, 0x2a, 0xac, 0x50, 0xac, 0xc3, 0x3f, 0xa3, 0x03,
-	0x85, 0x86, 0x68, 0x26, 0x66, 0x36, 0xb6, 0x33, 0x1d, 0xb8, 0x23, 0xba, 0x2b, 0xa1, 0x4f, 0x12,
-	0xac, 0x4c, 0xc8, 0x06, 0xda, 0x1d, 0xe4, 0xfb, 0x7d, 0x40, 0x63, 0x7b, 0x4f, 0x98, 0xe8, 0xd8,
-	0x48, 0x47, 0x6f, 0xdb, 0x8a, 0x74, 0xd7, 0x56, 0xa4, 0xef, 0x6d, 0x45, 0xfa, 0x7c, 0xaf, 0xf8,
-	0xee, 0xee, 0x15, 0xdf, 0xb7, 0x7b, 0xc5, 0x57, 0x9e, 0xe1, 0xff, 0x94, 0xcf, 0x7e, 0x06, 0x00,
-	0x00, 0xff, 0xff, 0x63, 0x52, 0x1c, 0x58, 0x6f, 0x07, 0x00, 0x00,
+	// 742 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x55, 0xcd, 0x6e, 0xda, 0x4c,
+	0x14, 0xc5, 0xfc, 0xe4, 0x83, 0x1b, 0x94, 0x0f, 0x4d, 0xfe, 0xf8, 0xf8, 0x12, 0x13, 0xb9, 0x1b,
+	0xf2, 0x53, 0x68, 0xdc, 0x4d, 0xd4, 0x64, 0xd1, 0x12, 0xac, 0x08, 0x89, 0x00, 0x31, 0x24, 0x55,
+	0x56, 0x95, 0xc1, 0x53, 0x32, 0xf9, 0xb1, 0x5d, 0xcf, 0x80, 0xc4, 0xaa, 0xaf, 0xd0, 0xbe, 0x47,
+	0x1f, 0x24, 0xcb, 0x2c, 0xbb, 0x42, 0x15, 0x51, 0x5f, 0x22, 0xab, 0xca, 0xc3, 0x84, 0x10, 0x17,
+	0x10, 0xed, 0x06, 0xcd, 0xe5, 0x9e, 0x39, 0xe7, 0xf8, 0xde, 0x83, 0x01, 0xd9, 0x70, 0x48, 0x0e,
+	0xab, 0x39, 0x66, 0xd0, 0xab, 0x5c, 0x67, 0xb7, 0x81, 0x99, 0xb1, 0xcb, 0x8b, 0xac, 0xe3, 0xda,
+	0xcc, 0x46, 0x71, 0x7e, 0x16, 0x8d, 0xd4, 0x52, 0xcb, 0x6e, 0xd9, 0xbc, 0x91, 0xf3, 0x4e, 0x03,
+	0x8c, 0x62, 0x42, 0xac, 0x44, 0x3e, 0xe2, 0x66, 0xb7, 0x79, 0x8d, 0xd1, 0x26, 0x44, 0x9c, 0x0b,
+	0x83, 0xe2, 0xa4, 0xb4, 0x21, 0x65, 0x16, 0xd4, 0xc5, 0xec, 0x28, 0x41, 0xb6, 0xea, 0xb5, 0xf4,
+	0x01, 0x02, 0xed, 0xc0, 0x1c, 0x65, 0x06, 0x6b, 0xd3, 0x64, 0x90, 0x63, 0x97, 0x9e, 0x63, 0x6b,
+	0xbc, 0xa7, 0x0b, 0x8c, 0xf2, 0x2d, 0x04, 0x89, 0x5a, 0xbb, 0x41, 0x9b, 0x2e, 0x71, 0x18, 0xb1,
+	0xad, 0xba, 0x41, 0xaf, 0xd0, 0x1a, 0x04, 0x89, 0xc9, 0xa5, 0x62, 0xf9, 0x78, 0xbf, 0x97, 0x0e,
+	0x16, 0x0b, 0x0f, 0xfc, 0x53, 0x0f, 0x12, 0x13, 0x65, 0x20, 0xea, 0xe2, 0x0e, 0xa1, 0xc4, 0xb6,
+	0xb8, 0x44, 0x38, 0x1f, 0x7f, 0xe8, 0xa5, 0xa3, 0xba, 0xf8, 0x4e, 0x1f, 0x76, 0xd1, 0x67, 0xf8,
+	0x97, 0x8e, 0x70, 0x7f, 0x20, 0x66, 0x32, 0xc4, 0x49, 0xcf, 0xfa, 0xbd, 0xf4, 0xc2, 0xa8, 0x2c,
+	0x17, 0x78, 0xdb, 0x22, 0xec, 0xa2, 0xdd, 0xc8, 0x36, 0xed, 0x9b, 0x9c, 0x6d, 0xd9, 0xd4, 0x71,
+	0xed, 0x4b, 0xdc, 0x64, 0xfc, 0xfc, 0x12, 0xab, 0xb4, 0xdd, 0xc8, 0x89, 0xb9, 0x8e, 0xb2, 0x3e,
+	0xce, 0x37, 0x5b, 0x2c, 0xe8, 0x0b, 0xa3, 0x8d, 0xa2, 0x89, 0xbe, 0x4a, 0xb0, 0xca, 0xb0, 0x7b,
+	0x43, 0x2c, 0x83, 0x1b, 0xc0, 0x96, 0xe9, 0xd8, 0xc4, 0x62, 0x9e, 0x93, 0x30, 0x77, 0x72, 0xde,
+	0xef, 0xa5, 0x97, 0xeb, 0x4f, 0x10, 0x4d, 0x20, 0xb8, 0xa1, 0x83, 0x99, 0x0d, 0xb9, 0xb8, 0x45,
+	0x28, 0x73, 0xbb, 0xa3, 0x66, 0x96, 0xd9, 0x18, 0x5a, 0x13, 0xed, 0x43, 0xec, 0xfa, 0x71, 0xaf,
+	0xc9, 0xc8, 0x86, 0x94, 0x99, 0x57, 0x57, 0x9f, 0xaf, 0x68, 0xb8, 0xf6, 0x7c, 0xf8, 0xb6, 0x97,
+	0x0e, 0xe8, 0x4f, 0x78, 0xc5, 0x82, 0x88, 0xd6, 0xc1, 0x16, 0x43, 0xdb, 0x10, 0x66, 0x5d, 0xe7,
+	0x31, 0x0f, 0x3e, 0x02, 0x0e, 0xa9, 0x77, 0x1d, 0xac, 0x73, 0x10, 0xda, 0x83, 0xb0, 0xd7, 0xe7,
+	0xdb, 0x9a, 0x57, 0x65, 0x5f, 0x20, 0x7c, 0xdb, 0x17, 0xa2, 0xfc, 0x86, 0xf2, 0x06, 0x52, 0x47,
+	0x98, 0xf9, 0x21, 0x3a, 0xfe, 0xd4, 0xc6, 0x94, 0x4d, 0xcf, 0x89, 0x72, 0x02, 0xff, 0x8f, 0xbd,
+	0x4b, 0x1d, 0xdb, 0xa2, 0x18, 0xa9, 0xc2, 0x94, 0x34, 0x8b, 0x29, 0x61, 0x47, 0x86, 0xb5, 0x12,
+	0xa1, 0xbf, 0x71, 0x52, 0x61, 0x48, 0x39, 0x87, 0xf5, 0x09, 0x7d, 0x21, 0xba, 0x37, 0x14, 0x0d,
+	0xfd, 0xe1, 0x24, 0xf6, 0x61, 0xfd, 0xbd, 0xc1, 0x9a, 0x17, 0x93, 0xb4, 0x51, 0x0a, 0xa2, 0x96,
+	0xed, 0x62, 0xe7, 0xda, 0xe8, 0xf2, 0x67, 0x8a, 0xea, 0xc3, 0x5a, 0x39, 0x01, 0x79, 0xd2, 0x65,
+	0x61, 0x2c, 0x07, 0x11, 0xec, 0x6d, 0x4d, 0x8c, 0x63, 0x71, 0xcc, 0x42, 0x85, 0x9d, 0x01, 0x4e,
+	0xa9, 0xc1, 0xfa, 0xa9, 0x63, 0x1a, 0x0c, 0x4f, 0x5a, 0xce, 0xdf, 0xcc, 0x77, 0x03, 0xe4, 0x49,
+	0xa4, 0x03, 0x9f, 0x5b, 0x6b, 0x10, 0xe1, 0x6f, 0x1b, 0x14, 0x85, 0x70, 0xa5, 0xaa, 0x95, 0x13,
+	0x01, 0x14, 0x83, 0xc8, 0x61, 0xa9, 0x52, 0xd3, 0x12, 0xd2, 0xd6, 0x0b, 0x98, 0x1b, 0xbc, 0x5f,
+	0xd0, 0x3c, 0xfc, 0x53, 0xd5, 0xca, 0x85, 0x62, 0xf9, 0x28, 0x11, 0x40, 0x71, 0x88, 0x1e, 0x56,
+	0x8e, 0xab, 0x25, 0xad, 0xee, 0x81, 0x0e, 0x20, 0x36, 0x0c, 0xa8, 0x47, 0x53, 0xae, 0x94, 0xb5,
+	0x44, 0xc0, 0xbb, 0x71, 0xa8, 0x6b, 0xef, 0xea, 0x5a, 0x21, 0x21, 0x79, 0xc5, 0x69, 0xb5, 0xc0,
+	0x8b, 0xa0, 0x57, 0xe8, 0xda, 0x71, 0xe5, 0x4c, 0x2b, 0x24, 0x42, 0xea, 0xcf, 0x10, 0xfc, 0xa7,
+	0xa9, 0x7e, 0x7f, 0x35, 0xec, 0x76, 0x48, 0x13, 0xa3, 0x4b, 0x58, 0x1c, 0x93, 0x39, 0x94, 0x79,
+	0xfe, 0xf4, 0x93, 0x23, 0x9d, 0xda, 0x9c, 0x01, 0x29, 0x56, 0xe6, 0xc0, 0xf2, 0xd8, 0xb0, 0xa1,
+	0x2d, 0xff, 0xcf, 0x79, 0x72, 0x62, 0x53, 0xdb, 0x33, 0x61, 0x85, 0x62, 0x1b, 0x56, 0xc6, 0xc7,
+	0x08, 0xf9, 0x68, 0xa6, 0x26, 0x35, 0xb5, 0x33, 0x1b, 0x78, 0x20, 0xfa, 0x4a, 0x42, 0x14, 0x56,
+	0xc6, 0xa7, 0xc2, 0x2f, 0x3b, 0x35, 0x90, 0x7e, 0xd9, 0xe9, 0x41, 0xcb, 0x27, 0x6f, 0xfb, 0xb2,
+	0x74, 0xd7, 0x97, 0xa5, 0x1f, 0x7d, 0x59, 0xfa, 0x72, 0x2f, 0x07, 0xee, 0xee, 0xe5, 0xc0, 0xf7,
+	0x7b, 0x39, 0xd0, 0x98, 0xe3, 0xff, 0x8f, 0xaf, 0x7f, 0x05, 0x00, 0x00, 0xff, 0xff, 0xfd, 0x59,
+	0xe6, 0xd2, 0x65, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -734,8 +734,8 @@ type E2SubscriptionTaskServiceClient interface {
 	ListSubscriptionTasks(ctx context.Context, in *ListSubscriptionTasksRequest, opts ...grpc.CallOption) (*ListSubscriptionTasksResponse, error)
 	// WatchSubscriptionTasks returns a stream of changes in the set of available E2 Tasks.
 	WatchSubscriptionTasks(ctx context.Context, in *WatchSubscriptionTasksRequest, opts ...grpc.CallOption) (E2SubscriptionTaskService_WatchSubscriptionTasksClient, error)
-	// UpdateSubscriptionTaskState updates a task state
-	UpdateSubscriptionTaskState(ctx context.Context, in *UpdateSubscriptionTaskStateRequest, opts ...grpc.CallOption) (*UpdateSubscriptionTaskStateResponse, error)
+	// UpdateSubscriptionTask updates a task status
+	UpdateSubscriptionTask(ctx context.Context, in *UpdateSubscriptionTaskRequest, opts ...grpc.CallOption) (*UpdateSubscriptionTaskResponse, error)
 }
 
 type e2SubscriptionTaskServiceClient struct {
@@ -796,9 +796,9 @@ func (x *e2SubscriptionTaskServiceWatchSubscriptionTasksClient) Recv() (*WatchSu
 	return m, nil
 }
 
-func (c *e2SubscriptionTaskServiceClient) UpdateSubscriptionTaskState(ctx context.Context, in *UpdateSubscriptionTaskStateRequest, opts ...grpc.CallOption) (*UpdateSubscriptionTaskStateResponse, error) {
-	out := new(UpdateSubscriptionTaskStateResponse)
-	err := c.cc.Invoke(ctx, "/task.v1beta1.E2SubscriptionTaskService/UpdateSubscriptionTaskState", in, out, opts...)
+func (c *e2SubscriptionTaskServiceClient) UpdateSubscriptionTask(ctx context.Context, in *UpdateSubscriptionTaskRequest, opts ...grpc.CallOption) (*UpdateSubscriptionTaskResponse, error) {
+	out := new(UpdateSubscriptionTaskResponse)
+	err := c.cc.Invoke(ctx, "/task.v1beta1.E2SubscriptionTaskService/UpdateSubscriptionTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -813,8 +813,8 @@ type E2SubscriptionTaskServiceServer interface {
 	ListSubscriptionTasks(context.Context, *ListSubscriptionTasksRequest) (*ListSubscriptionTasksResponse, error)
 	// WatchSubscriptionTasks returns a stream of changes in the set of available E2 Tasks.
 	WatchSubscriptionTasks(*WatchSubscriptionTasksRequest, E2SubscriptionTaskService_WatchSubscriptionTasksServer) error
-	// UpdateSubscriptionTaskState updates a task state
-	UpdateSubscriptionTaskState(context.Context, *UpdateSubscriptionTaskStateRequest) (*UpdateSubscriptionTaskStateResponse, error)
+	// UpdateSubscriptionTask updates a task status
+	UpdateSubscriptionTask(context.Context, *UpdateSubscriptionTaskRequest) (*UpdateSubscriptionTaskResponse, error)
 }
 
 // UnimplementedE2SubscriptionTaskServiceServer can be embedded to have forward compatible implementations.
@@ -830,8 +830,8 @@ func (*UnimplementedE2SubscriptionTaskServiceServer) ListSubscriptionTasks(ctx c
 func (*UnimplementedE2SubscriptionTaskServiceServer) WatchSubscriptionTasks(req *WatchSubscriptionTasksRequest, srv E2SubscriptionTaskService_WatchSubscriptionTasksServer) error {
 	return status.Errorf(codes.Unimplemented, "method WatchSubscriptionTasks not implemented")
 }
-func (*UnimplementedE2SubscriptionTaskServiceServer) UpdateSubscriptionTaskState(ctx context.Context, req *UpdateSubscriptionTaskStateRequest) (*UpdateSubscriptionTaskStateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSubscriptionTaskState not implemented")
+func (*UnimplementedE2SubscriptionTaskServiceServer) UpdateSubscriptionTask(ctx context.Context, req *UpdateSubscriptionTaskRequest) (*UpdateSubscriptionTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSubscriptionTask not implemented")
 }
 
 func RegisterE2SubscriptionTaskServiceServer(s *grpc.Server, srv E2SubscriptionTaskServiceServer) {
@@ -895,20 +895,20 @@ func (x *e2SubscriptionTaskServiceWatchSubscriptionTasksServer) Send(m *WatchSub
 	return x.ServerStream.SendMsg(m)
 }
 
-func _E2SubscriptionTaskService_UpdateSubscriptionTaskState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSubscriptionTaskStateRequest)
+func _E2SubscriptionTaskService_UpdateSubscriptionTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSubscriptionTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(E2SubscriptionTaskServiceServer).UpdateSubscriptionTaskState(ctx, in)
+		return srv.(E2SubscriptionTaskServiceServer).UpdateSubscriptionTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/task.v1beta1.E2SubscriptionTaskService/UpdateSubscriptionTaskState",
+		FullMethod: "/task.v1beta1.E2SubscriptionTaskService/UpdateSubscriptionTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(E2SubscriptionTaskServiceServer).UpdateSubscriptionTaskState(ctx, req.(*UpdateSubscriptionTaskStateRequest))
+		return srv.(E2SubscriptionTaskServiceServer).UpdateSubscriptionTask(ctx, req.(*UpdateSubscriptionTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -926,8 +926,8 @@ var _E2SubscriptionTaskService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _E2SubscriptionTaskService_ListSubscriptionTasks_Handler,
 		},
 		{
-			MethodName: "UpdateSubscriptionTaskState",
-			Handler:    _E2SubscriptionTaskService_UpdateSubscriptionTaskState_Handler,
+			MethodName: "UpdateSubscriptionTask",
+			Handler:    _E2SubscriptionTaskService_UpdateSubscriptionTask_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
@@ -940,7 +940,7 @@ var _E2SubscriptionTaskService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "api/e2/task/v1beta1/task.proto",
 }
 
-func (m *State) Marshal() (dAtA []byte, err error) {
+func (m *Lifecycle) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -950,12 +950,12 @@ func (m *State) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *State) MarshalTo(dAtA []byte) (int, error) {
+func (m *Lifecycle) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *State) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *Lifecycle) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -994,7 +994,7 @@ func (m *SubscriptionTask) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	{
-		size, err := m.State.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.Lifecycle.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -1261,7 +1261,7 @@ func (m *WatchSubscriptionTasksResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 	return len(dAtA) - i, nil
 }
 
-func (m *UpdateSubscriptionTaskStateRequest) Marshal() (dAtA []byte, err error) {
+func (m *UpdateSubscriptionTaskRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1271,12 +1271,12 @@ func (m *UpdateSubscriptionTaskStateRequest) Marshal() (dAtA []byte, err error) 
 	return dAtA[:n], nil
 }
 
-func (m *UpdateSubscriptionTaskStateRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *UpdateSubscriptionTaskRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UpdateSubscriptionTaskStateRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UpdateSubscriptionTaskRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1296,7 +1296,7 @@ func (m *UpdateSubscriptionTaskStateRequest) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
-func (m *UpdateSubscriptionTaskStateResponse) Marshal() (dAtA []byte, err error) {
+func (m *UpdateSubscriptionTaskResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1306,12 +1306,12 @@ func (m *UpdateSubscriptionTaskStateResponse) Marshal() (dAtA []byte, err error)
 	return dAtA[:n], nil
 }
 
-func (m *UpdateSubscriptionTaskStateResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *UpdateSubscriptionTaskResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UpdateSubscriptionTaskStateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UpdateSubscriptionTaskResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1330,7 +1330,7 @@ func encodeVarintTask(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *State) Size() (n int) {
+func (m *Lifecycle) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1366,7 +1366,7 @@ func (m *SubscriptionTask) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTask(uint64(l))
 	}
-	l = m.State.Size()
+	l = m.Lifecycle.Size()
 	n += 1 + l + sovTask(uint64(l))
 	return n
 }
@@ -1458,7 +1458,7 @@ func (m *WatchSubscriptionTasksResponse) Size() (n int) {
 	return n
 }
 
-func (m *UpdateSubscriptionTaskStateRequest) Size() (n int) {
+func (m *UpdateSubscriptionTaskRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1471,7 +1471,7 @@ func (m *UpdateSubscriptionTaskStateRequest) Size() (n int) {
 	return n
 }
 
-func (m *UpdateSubscriptionTaskStateResponse) Size() (n int) {
+func (m *UpdateSubscriptionTaskResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1486,7 +1486,7 @@ func sovTask(x uint64) (n int) {
 func sozTask(x uint64) (n int) {
 	return sovTask(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *State) Unmarshal(dAtA []byte) error {
+func (m *Lifecycle) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1509,10 +1509,10 @@ func (m *State) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: State: wiretype end group for non-group")
+			return fmt.Errorf("proto: Lifecycle: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: State: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: Lifecycle: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1723,7 +1723,7 @@ func (m *SubscriptionTask) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Lifecycle", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1750,7 +1750,7 @@ func (m *SubscriptionTask) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.State.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Lifecycle.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2356,7 +2356,7 @@ func (m *WatchSubscriptionTasksResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UpdateSubscriptionTaskStateRequest) Unmarshal(dAtA []byte) error {
+func (m *UpdateSubscriptionTaskRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2379,10 +2379,10 @@ func (m *UpdateSubscriptionTaskStateRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UpdateSubscriptionTaskStateRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: UpdateSubscriptionTaskRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UpdateSubscriptionTaskStateRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UpdateSubscriptionTaskRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2445,7 +2445,7 @@ func (m *UpdateSubscriptionTaskStateRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UpdateSubscriptionTaskStateResponse) Unmarshal(dAtA []byte) error {
+func (m *UpdateSubscriptionTaskResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2468,10 +2468,10 @@ func (m *UpdateSubscriptionTaskStateResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UpdateSubscriptionTaskStateResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: UpdateSubscriptionTaskResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UpdateSubscriptionTaskStateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UpdateSubscriptionTaskResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

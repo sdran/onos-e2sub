@@ -75,7 +75,7 @@ func TestSubscriptionStore(t *testing.T) {
 	sub2, err = store2.Get(context.TODO(), "subscription-2")
 	assert.NoError(t, err)
 	assert.NotNil(t, sub2)
-	sub2.State.Status = subapi.Status_PENDING_DELETE
+	sub2.Lifecycle.Status = subapi.Status_PENDING_DELETE
 	revision = sub2.Revision
 	err = store1.Update(context.TODO(), sub2)
 	assert.NoError(t, err)
@@ -87,11 +87,11 @@ func TestSubscriptionStore(t *testing.T) {
 	sub12, err := store2.Get(context.TODO(), "subscription-1")
 	assert.NoError(t, err)
 
-	sub11.State.Status = subapi.Status_PENDING_DELETE
+	sub11.Lifecycle.Status = subapi.Status_PENDING_DELETE
 	err = store1.Update(context.TODO(), sub11)
 	assert.NoError(t, err)
 
-	sub12.State.Status = subapi.Status_PENDING_DELETE
+	sub12.Lifecycle.Status = subapi.Status_PENDING_DELETE
 	err = store2.Update(context.TODO(), sub12)
 	assert.Error(t, err)
 

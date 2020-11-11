@@ -29,14 +29,14 @@ service E2SubscriptionService {
     rpc WatchSubscriptions (WatchSubscriptionsRequest) returns (stream WatchSubscriptionsResponse);
 }
 
-// State is the subscription state
-message State {
+// Lifecycle is the subscription lifecycle
+message Lifecycle {
     Status status = 1;
 }
 
 // Status is a subscription status
 enum Status {
-    ALIVE = 0;
+    ACTIVE = 0;
     PENDING_DELETE = 1;
 }
 
@@ -76,9 +76,10 @@ message Subscription {
     string id = 1 [(gogoproto.casttype) = "ID", (gogoproto.customname) = "ID"];
     uint64 revision = 2 [(gogoproto.casttype) = "Revision"];
     string app_id = 3 [(gogoproto.casttype) = "AppID", (gogoproto.customname) = "AppID"];
-    ServiceModel service_model = 4;
-    Payload payload = 5;
-    State state = 6 [(gogoproto.nullable) = false];
+    uint64 e2_node_id = 4 [(gogoproto.casttype) = "E2NodeID", (gogoproto.customname) = "E2NodeID"];
+    ServiceModel service_model = 5;
+    Payload payload = 6;
+    Lifecycle lifecycle = 7 [(gogoproto.nullable) = false];
 }
 
 // AddSubscriptionRequest a subscription request

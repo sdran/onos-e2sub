@@ -80,7 +80,7 @@ func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubsc
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
 		return nil, err
 	}
-	sub.State.Status = subapi.Status_PENDING_DELETE
+	sub.Lifecycle.Status = subapi.Status_PENDING_DELETE
 	err = s.subscriptionStore.Update(ctx, sub)
 	if err != nil {
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
@@ -102,7 +102,7 @@ func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscrip
 
 	filtered := make([]subapi.Subscription, 0, len(subs))
 	for _, sub := range subs {
-		if sub.State.Status == subapi.Status_ALIVE {
+		if sub.Lifecycle.Status == subapi.Status_ACTIVE {
 			filtered = append(filtered, sub)
 		}
 	}

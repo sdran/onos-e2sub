@@ -7,12 +7,12 @@
     - [Event](#task.v1beta1.Event)
     - [GetSubscriptionTaskRequest](#task.v1beta1.GetSubscriptionTaskRequest)
     - [GetSubscriptionTaskResponse](#task.v1beta1.GetSubscriptionTaskResponse)
+    - [Lifecycle](#task.v1beta1.Lifecycle)
     - [ListSubscriptionTasksRequest](#task.v1beta1.ListSubscriptionTasksRequest)
     - [ListSubscriptionTasksResponse](#task.v1beta1.ListSubscriptionTasksResponse)
-    - [State](#task.v1beta1.State)
     - [SubscriptionTask](#task.v1beta1.SubscriptionTask)
-    - [UpdateSubscriptionTaskStateRequest](#task.v1beta1.UpdateSubscriptionTaskStateRequest)
-    - [UpdateSubscriptionTaskStateResponse](#task.v1beta1.UpdateSubscriptionTaskStateResponse)
+    - [UpdateSubscriptionTaskRequest](#task.v1beta1.UpdateSubscriptionTaskRequest)
+    - [UpdateSubscriptionTaskResponse](#task.v1beta1.UpdateSubscriptionTaskResponse)
     - [WatchSubscriptionTasksRequest](#task.v1beta1.WatchSubscriptionTasksRequest)
     - [WatchSubscriptionTasksResponse](#task.v1beta1.WatchSubscriptionTasksResponse)
   
@@ -79,6 +79,22 @@ GetSubscriptionTaskResponse is a response with invormation about a requested Sub
 
 
 
+<a name="task.v1beta1.Lifecycle"></a>
+
+### Lifecycle
+Lifecycle is a subscription task status
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| phase | [Phase](#task.v1beta1.Phase) |  |  |
+| status | [Status](#task.v1beta1.Status) |  |  |
+
+
+
+
+
+
 <a name="task.v1beta1.ListSubscriptionTasksRequest"></a>
 
 ### ListSubscriptionTasksRequest
@@ -104,22 +120,6 @@ ListSubscriptionTasksResponse is a response to list all available SubscriptionTa
 
 
 
-<a name="task.v1beta1.State"></a>
-
-### State
-State is a subscription task state
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| phase | [Phase](#task.v1beta1.Phase) |  |  |
-| status | [Status](#task.v1beta1.Status) |  |  |
-
-
-
-
-
-
 <a name="task.v1beta1.SubscriptionTask"></a>
 
 ### SubscriptionTask
@@ -132,17 +132,17 @@ SubscriptionTask is a task representing a subscription between an E2 termination
 | revision | [uint64](#uint64) |  |  |
 | subscription_id | [string](#string) |  |  |
 | termination_endpoint_id | [string](#string) |  |  |
-| state | [State](#task.v1beta1.State) |  |  |
+| lifecycle | [Lifecycle](#task.v1beta1.Lifecycle) |  |  |
 
 
 
 
 
 
-<a name="task.v1beta1.UpdateSubscriptionTaskStateRequest"></a>
+<a name="task.v1beta1.UpdateSubscriptionTaskRequest"></a>
 
-### UpdateSubscriptionTaskStateRequest
-UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask state
+### UpdateSubscriptionTaskRequest
+UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask status
 
 
 | Field | Type | Label | Description |
@@ -154,10 +154,10 @@ UpdateSubscriptionTaskRequest is a request for updating a SubscriptionTask state
 
 
 
-<a name="task.v1beta1.UpdateSubscriptionTaskStateResponse"></a>
+<a name="task.v1beta1.UpdateSubscriptionTaskResponse"></a>
 
-### UpdateSubscriptionTaskStateResponse
-UpdateSubscriptionTaskResponse is a response to updating a SubscriptionTask state
+### UpdateSubscriptionTaskResponse
+UpdateSubscriptionTaskResponse is a response to updating a SubscriptionTask status
 
 
 
@@ -248,7 +248,7 @@ E2SubscriptionTaskService manages subscription tasks between E2 termination poin
 | GetSubscriptionTask | [GetSubscriptionTaskRequest](#task.v1beta1.GetSubscriptionTaskRequest) | [GetSubscriptionTaskResponse](#task.v1beta1.GetSubscriptionTaskResponse) | GetSubscriptionTask retrieves information about a specific task |
 | ListSubscriptionTasks | [ListSubscriptionTasksRequest](#task.v1beta1.ListSubscriptionTasksRequest) | [ListSubscriptionTasksResponse](#task.v1beta1.ListSubscriptionTasksResponse) | ListSubscriptionTasks returns the list of currently registered E2 Tasks. |
 | WatchSubscriptionTasks | [WatchSubscriptionTasksRequest](#task.v1beta1.WatchSubscriptionTasksRequest) | [WatchSubscriptionTasksResponse](#task.v1beta1.WatchSubscriptionTasksResponse) stream | WatchSubscriptionTasks returns a stream of changes in the set of available E2 Tasks. |
-| UpdateSubscriptionTaskState | [UpdateSubscriptionTaskStateRequest](#task.v1beta1.UpdateSubscriptionTaskStateRequest) | [UpdateSubscriptionTaskStateResponse](#task.v1beta1.UpdateSubscriptionTaskStateResponse) | UpdateSubscriptionTaskState updates a task state |
+| UpdateSubscriptionTask | [UpdateSubscriptionTaskRequest](#task.v1beta1.UpdateSubscriptionTaskRequest) | [UpdateSubscriptionTaskResponse](#task.v1beta1.UpdateSubscriptionTaskResponse) | UpdateSubscriptionTask updates a task status |
 
  
 
