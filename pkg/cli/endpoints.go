@@ -10,7 +10,7 @@ import (
 	"io"
 	"text/tabwriter"
 
-	registry "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
+	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +24,7 @@ func displayHeaders(writer io.Writer) {
 	_, _ = fmt.Fprintln(writer, registrationHeaders)
 }
 
-func displayEndPoint(writer io.Writer, ep registry.TerminationEndPoint) {
+func displayEndPoint(writer io.Writer, ep regapi.TerminationEndpoint) {
 	_, _ = fmt.Fprintf(writer, endPointFormat, ep.ID, ep.ID, ep.Port)
 }
 
@@ -54,16 +54,16 @@ func runListEndpointsCommand(cmd *cobra.Command, args []string) error {
 		_ = writer.Flush()
 	}
 
-	request := registry.ListTerminationsRequest{}
+	request := regapi.ListTerminationsRequest{}
 
-	client := registry.NewE2RegistryServiceClient(conn)
+	client := regapi.NewE2RegistryServiceClient(conn)
 
 	response, err := client.ListTerminations(context.Background(), &request)
 	if err != nil {
 		return err
 	}
 
-	for _, ep := range response.EndPoints {
+	for _, ep := range response.Endpoints {
 		displayEndPoint(writer, ep)
 	}
 

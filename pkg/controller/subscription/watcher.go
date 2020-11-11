@@ -6,10 +6,10 @@ package subscription
 
 import (
 	"context"
-	regapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
+	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
 	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
-	"github.com/onosproject/onos-e2sub/pkg/store/registry"
+	"github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
@@ -66,7 +66,7 @@ var _ controller.Watcher = &Watcher{}
 // TerminationEndpointWatcher is a termination endpoint watcher
 type TerminationEndpointWatcher struct {
 	subs      subscription.Store
-	endpoints registry.Store
+	endpoints endpoint.Store
 	cancel    context.CancelFunc
 	mu        sync.Mutex
 }

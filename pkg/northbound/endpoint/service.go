@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: LicenseRef-ONF-Member-1.0
 
-package registry
+package endpoint
 
 import (
 	"context"
-	regapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
-	store "github.com/onosproject/onos-e2sub/pkg/store/registry"
+	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+	store "github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"google.golang.org/grpc"
@@ -55,8 +55,8 @@ func CreateE2RegistryClient(cc *grpc.ClientConn) regapi.E2RegistryServiceClient 
 // AddTermination adds an E2 end-point
 func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationRequest) (*regapi.AddTerminationResponse, error) {
 	log.Debugf("Received AddTerminationRequest %+v", req)
-	ep := req.EndPoint
-	err := s.endPointStore.Store(ctx, ep)
+	ep := req.Endpoint
+	err := s.endPointStore.Create(ctx, ep)
 	if err != nil {
 		log.Warnf("AddTerminationRequest %+v failed: %v", req, err)
 		return nil, err
@@ -75,7 +75,7 @@ func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationR
 		return nil, err
 	}
 	res := &regapi.GetTerminationResponse{
-		EndPoint: ep,
+		Endpoint: ep,
 	}
 	log.Debugf("Sending GetTerminationResponse %+v", res)
 	return res, nil
@@ -97,20 +97,14 @@ func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTermin
 // ListTerminations returns the list of current existing termination end-points
 func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminationsRequest) (*regapi.ListTerminationsResponse, error) {
 	log.Debugf("Received ListTerminationsRequest %+v", req)
-	ch := make(chan *regapi.TerminationEndPoint)
-	err := s.endPointStore.List(ctx, ch)
+	eps, err := s.endPointStore.List(ctx)
 	if err != nil {
 		log.Warnf("ListTerminationsRequest %+v failed: %v", req, err)
 		return nil, err
 	}
 
-	eps := make([]regapi.TerminationEndPoint, 0)
-	for entry := range ch {
-		eps = append(eps, *entry)
-	}
-
 	res := &regapi.ListTerminationsResponse{
-		EndPoints: eps,
+		Endpoints: eps,
 	}
 	log.Debugf("Sending ListTerminationsResponse %+v", res)
 	return res, nil

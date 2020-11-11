@@ -3,7 +3,7 @@
 
 ## Table of Contents
 
-- [api/e2/registry/v1beta1/registry.proto](#api/e2/registry/v1beta1/registry.proto)
+- [api/e2/endpoint/v1beta1/endpoint.proto](#api/e2/endpoint/v1beta1/endpoint.proto)
     - [AddTerminationRequest](#registry.v1beta1.AddTerminationRequest)
     - [AddTerminationResponse](#registry.v1beta1.AddTerminationResponse)
     - [Event](#registry.v1beta1.Event)
@@ -13,7 +13,7 @@
     - [ListTerminationsResponse](#registry.v1beta1.ListTerminationsResponse)
     - [RemoveTerminationRequest](#registry.v1beta1.RemoveTerminationRequest)
     - [RemoveTerminationResponse](#registry.v1beta1.RemoveTerminationResponse)
-    - [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint)
+    - [TerminationEndpoint](#registry.v1beta1.TerminationEndpoint)
     - [WatchTerminationsRequest](#registry.v1beta1.WatchTerminationsRequest)
     - [WatchTerminationsResponse](#registry.v1beta1.WatchTerminationsResponse)
   
@@ -25,10 +25,10 @@
 
 
 
-<a name="api/e2/registry/v1beta1/registry.proto"></a>
+<a name="api/e2/endpoint/v1beta1/endpoint.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## api/e2/registry/v1beta1/registry.proto
+## api/e2/endpoint/v1beta1/endpoint.proto
 
 
 
@@ -40,7 +40,7 @@ AddTerminationRequest is a request for adding a new termination point
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| end_point | [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint) |  |  |
+| endpoint | [TerminationEndpoint](#registry.v1beta1.TerminationEndpoint) |  |  |
 
 
 
@@ -66,7 +66,7 @@ Event is an end-point event
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | type | [EventType](#registry.v1beta1.EventType) |  |  |
-| end_point | [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint) |  |  |
+| endpoint | [TerminationEndpoint](#registry.v1beta1.TerminationEndpoint) |  |  |
 
 
 
@@ -96,7 +96,7 @@ GetTerminationResponse is a response with invormation about a requested terminat
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| end_point | [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint) |  |  |
+| endpoint | [TerminationEndpoint](#registry.v1beta1.TerminationEndpoint) |  |  |
 
 
 
@@ -121,7 +121,7 @@ ListTerminationsResponse is a response to list all available E2 terminations
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| end_points | [TerminationEndPoint](#registry.v1beta1.TerminationEndPoint) | repeated |  |
+| endpoints | [TerminationEndpoint](#registry.v1beta1.TerminationEndpoint) | repeated |  |
 
 
 
@@ -153,9 +153,9 @@ RemoveTerminationResponse is a response to removing a termination point
 
 
 
-<a name="registry.v1beta1.TerminationEndPoint"></a>
+<a name="registry.v1beta1.TerminationEndpoint"></a>
 
-### TerminationEndPoint
+### TerminationEndpoint
 Termination is a record identifying the IP address and TCP port coordinates where the E2 termination
 service is available.
 
@@ -163,6 +163,7 @@ service is available.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  |  |
+| revision | [uint64](#uint64) |  |  |
 | ip | [string](#string) |  |  |
 | port | [uint32](#uint32) |  |  |
 

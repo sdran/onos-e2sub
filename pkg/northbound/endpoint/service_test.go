@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: LicenseRef-ONF-Member-1.0
 
-package registry
+package endpoint
 
 import (
 	"context"
-	regapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
-	store "github.com/onosproject/onos-e2sub/pkg/store/registry"
+	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+	store "github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -60,14 +60,14 @@ func TestServiceBasics(t *testing.T) {
 	client := regapi.NewE2RegistryServiceClient(conn)
 
 	_, err := client.AddTermination(context.Background(), &regapi.AddTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{
+		Endpoint: &regapi.TerminationEndpoint{
 			ID: "1", IP: "10.10.10.1", Port: 111,
 		},
 	})
 	assert.NoError(t, err)
 
 	_, err = client.AddTermination(context.Background(), &regapi.AddTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{
+		Endpoint: &regapi.TerminationEndpoint{
 			ID: "2", IP: "10.10.10.2", Port: 222,
 		},
 	})
@@ -76,8 +76,8 @@ func TestServiceBasics(t *testing.T) {
 	res, err := client.ListTerminations(context.Background(), &regapi.ListTerminationsRequest{})
 	assert.NoError(t, err)
 	assert.Condition(t, func() bool {
-		return len(res.EndPoints) == 2 &&
-			(res.EndPoints[0].ID == regapi.ID("1") || res.EndPoints[1].ID == regapi.ID("1"))
+		return len(res.Endpoints) == 2 &&
+			(res.Endpoints[0].ID == regapi.ID("1") || res.Endpoints[1].ID == regapi.ID("1"))
 	})
 
 	_, err = client.RemoveTermination(context.Background(), &regapi.RemoveTerminationRequest{
@@ -88,7 +88,7 @@ func TestServiceBasics(t *testing.T) {
 	res, err = client.ListTerminations(context.Background(), &regapi.ListTerminationsRequest{})
 	assert.NoError(t, err)
 	assert.Condition(t, func() bool {
-		return len(res.EndPoints) == 1 && res.EndPoints[0].ID == regapi.ID("2")
+		return len(res.Endpoints) == 1 && res.Endpoints[0].ID == regapi.ID("2")
 	})
 }
 
@@ -97,7 +97,7 @@ func TestWatchBasics(t *testing.T) {
 	client := regapi.NewE2RegistryServiceClient(conn)
 
 	_, err := client.AddTermination(context.Background(), &regapi.AddTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{
+		Endpoint: &regapi.TerminationEndpoint{
 			ID: "1", IP: "10.10.10.1", Port: 111,
 		},
 	})
@@ -115,18 +115,18 @@ func TestWatchBasics(t *testing.T) {
 		wr, err := res.Recv()
 		assert.NoError(t, err)
 		assert.Equal(t, regapi.EventType_NONE, wr.Event.Type)
-		assert.Equal(t, regapi.ID("1"), wr.Event.EndPoint.ID)
+		assert.Equal(t, regapi.ID("1"), wr.Event.Endpoint.ID)
 		pause.Done()
 
 		wr, err = res.Recv()
 		assert.NoError(t, err)
 		assert.Equal(t, regapi.EventType_ADDED, wr.Event.Type)
-		assert.Equal(t, regapi.ID("2"), wr.Event.EndPoint.ID)
+		assert.Equal(t, regapi.ID("2"), wr.Event.Endpoint.ID)
 
 		wr, err = res.Recv()
 		assert.NoError(t, err)
 		assert.Equal(t, regapi.EventType_REMOVED, wr.Event.Type)
-		assert.Equal(t, regapi.ID("1"), wr.Event.EndPoint.ID)
+		assert.Equal(t, regapi.ID("1"), wr.Event.Endpoint.ID)
 
 		wg.Done()
 	}()
@@ -134,7 +134,7 @@ func TestWatchBasics(t *testing.T) {
 	// Pause before adding a new item to validate that existing items are processed first
 	pause.Wait()
 	_, err = client.AddTermination(context.Background(), &regapi.AddTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{
+		Endpoint: &regapi.TerminationEndpoint{
 			ID: "2", IP: "10.10.10.2", Port: 222,
 		},
 	})
@@ -153,7 +153,7 @@ func TestBadAdd(t *testing.T) {
 	client := regapi.NewE2RegistryServiceClient(conn)
 
 	_, err := client.AddTermination(context.Background(), &regapi.AddTerminationRequest{
-		EndPoint: &regapi.TerminationEndPoint{},
+		Endpoint: &regapi.TerminationEndpoint{},
 	})
 	assert.Error(t, err)
 }

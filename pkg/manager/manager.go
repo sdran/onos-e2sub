@@ -6,10 +6,10 @@ package manager
 
 import (
 	subctrl "github.com/onosproject/onos-e2sub/pkg/controller/subscription"
-	"github.com/onosproject/onos-e2sub/pkg/northbound/registry"
+	"github.com/onosproject/onos-e2sub/pkg/northbound/endpoint"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/task"
-	regstore "github.com/onosproject/onos-e2sub/pkg/store/registry"
+	regstore "github.com/onosproject/onos-e2sub/pkg/store/endpoint"	
 	substore "github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	taskstore "github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
@@ -89,7 +89,7 @@ func (m *Manager) startNorthboundServer() error {
 	}
 
 	s.AddService(logging.Service{})
-	s.AddService(registry.NewService(regStore))
+	s.AddService(endpoint.NewService(regStore))
 	s.AddService(subscription.NewService(subStore))
 	s.AddService(task.NewService(taskStore))
 

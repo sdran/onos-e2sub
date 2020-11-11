@@ -7,10 +7,9 @@ package subscription
 import (
 	"context"
 	"fmt"
-	endpointapi "github.com/onosproject/onos-e2sub/api/e2/registry/v1beta1"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
 	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
-	"github.com/onosproject/onos-e2sub/pkg/store/registry"
+	"github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
@@ -24,7 +23,7 @@ var log = logging.GetLogger("subscription", "controller")
 const defaultTimeout = 30 * time.Second
 
 // NewController returns a new network controller
-func NewController(subs subscription.Store, endpoints registry.Store, tasks task.Store) *controller.Controller {
+func NewController(subs subscription.Store, endpoints endpoint.Store, tasks task.Store) *controller.Controller {
 	c := controller.NewController("Subscription")
 	c.Watch(&Watcher{
 		subs: subs,
@@ -48,7 +47,7 @@ func NewController(subs subscription.Store, endpoints registry.Store, tasks task
 // Reconciler is a device change reconciler
 type Reconciler struct {
 	subs      subscription.Store
-	endpoints registry.Store
+	endpoints endpoint.Store
 	tasks     task.Store
 }
 
@@ -78,16 +77,9 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 	defer cancel()
 
 	// List the termination endpoints
-	endpointsCh := make(chan *endpointapi.TerminationEndPoint)
-	err := r.endpoints.List(ctx, endpointsCh)
+	endpoints, err := r.endpoints.List(ctx)
 	if err != nil {
 		return controller.Result{}, err
-	}
-
-	// Create a list of termination endpoints
-	endpoints := make([]endpointapi.TerminationEndPoint, 0)
-	for endpoint := range endpointsCh {
-		endpoints = append(endpoints, *endpoint)
 	}
 
 	// Get the first termination endpoint
