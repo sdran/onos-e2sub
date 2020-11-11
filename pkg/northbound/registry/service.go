@@ -15,29 +15,26 @@ import (
 var log = logging.GetLogger("northbound", "ricapi", "registry")
 
 // NewService creates a new registry service
-func NewService() (northbound.Service, error) {
-	endPointStore, err := NewAtomixStore()
-	if err != nil {
-		return nil, err
-	}
+func NewService(store Store) northbound.Service {
 	return &Service{
-		store: endPointStore,
-	}, nil
+		store: store,
+	}
 }
 
 // Service is a Service implementation for subscription service.
 type Service struct {
-	northbound.Service
 	store Store
 }
 
 // Register registers the Service with the gRPC server.
-func (s Service) Register(r *grpc.Server) {
+func (s *Service) Register(r *grpc.Server) {
 	server := &Server{
 		endPointStore: s.store,
 	}
 	regapi.RegisterE2RegistryServiceServer(r, server)
 }
+
+var _ northbound.Service = &Service{}
 
 // Server implements the gRPC service for managing of subscriptions
 type Server struct {

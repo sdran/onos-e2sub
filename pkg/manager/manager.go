@@ -6,6 +6,8 @@ package manager
 
 import (
 	"github.com/onosproject/onos-e2sub/pkg/northbound/registry"
+	"github.com/onosproject/onos-e2sub/pkg/northbound/subscription"
+	"github.com/onosproject/onos-e2sub/pkg/northbound/task"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 )
@@ -61,13 +63,25 @@ func (m *Manager) startNorthboundServer() error {
 		true,
 		northbound.SecurityConfig{}))
 
-	regService, err := registry.NewService()
+	regStore, err := registry.NewAtomixStore()
+	if err != nil {
+		return err
+	}
+
+	subStore, err := subscription.NewAtomixStore()
+	if err != nil {
+		return err
+	}
+
+	taskStore, err := task.NewAtomixStore()
 	if err != nil {
 		return err
 	}
 
 	s.AddService(logging.Service{})
-	s.AddService(regService)
+	s.AddService(registry.NewService(regStore))
+	s.AddService(subscription.NewService(subStore))
+	s.AddService(task.NewService(taskStore))
 
 	doneCh := make(chan error)
 	go func() {
