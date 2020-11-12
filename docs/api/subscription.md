@@ -220,7 +220,7 @@ Subscription is a subscription state
 | id | [string](#string) |  |  |
 | revision | [uint64](#uint64) |  |  |
 | app_id | [string](#string) |  |  |
-| e2_node_id | [uint64](#uint64) |  |  |
+| e2_node_id | [string](#string) |  |  |
 | service_model | [ServiceModel](#subscription.v1beta1.ServiceModel) |  |  |
 | payload | [Payload](#subscription.v1beta1.Payload) |  |  |
 | lifecycle | [Lifecycle](#subscription.v1beta1.Lifecycle) |  |  |

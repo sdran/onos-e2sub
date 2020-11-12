@@ -11,6 +11,8 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var log = logging.GetLogger("northbound", "ricapi", "subscription")
@@ -46,6 +48,16 @@ type Server struct {
 func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptionRequest) (*subapi.AddSubscriptionResponse, error) {
 	log.Debugf("Received AddSubscriptionRequest %+v", req)
 	sub := req.Subscription
+	if sub.ID == "" {
+		return nil, status.Error(codes.InvalidArgument, "Subscription ID is required")
+	}
+	if sub.AppID == "" {
+		return nil, status.Error(codes.InvalidArgument, "Subscription AppID is required")
+	}
+	if sub.E2NodeID == "" {
+		return nil, status.Error(codes.InvalidArgument, "Subscription E2NodeID is required")
+	}
+
 	err := s.subscriptionStore.Create(ctx, sub)
 	if err != nil {
 		log.Warnf("AddSubscriptionRequest %+v failed: %v", req, err)
