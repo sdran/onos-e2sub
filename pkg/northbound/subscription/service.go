@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var log = logging.GetLogger("northbound", "ricapi", "subscription")
+var log = logging.GetLogger("northbound", "subscription")
 
 // NewService creates a new subscription service
 func NewService(store store.Store) northbound.Service {
@@ -46,7 +46,7 @@ type Server struct {
 
 // AddSubscription adds a subscription
 func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptionRequest) (*subapi.AddSubscriptionResponse, error) {
-	log.Debugf("Received AddSubscriptionRequest %+v", req)
+	log.Infof("Received AddSubscriptionRequest %+v", req)
 	sub := req.Subscription
 	if sub.ID == "" {
 		return nil, status.Error(codes.InvalidArgument, "Subscription ID is required")
@@ -66,13 +66,13 @@ func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptio
 	res := &subapi.AddSubscriptionResponse{
 		Subscription: sub,
 	}
-	log.Debugf("Sending AddSubscriptionResponse %+v", res)
+	log.Infof("Sending AddSubscriptionResponse %+v", res)
 	return res, nil
 }
 
 // GetSubscription retrieves information about a specific subscription in the list of existing subscriptions
 func (s *Server) GetSubscription(ctx context.Context, req *subapi.GetSubscriptionRequest) (*subapi.GetSubscriptionResponse, error) {
-	log.Debugf("Received GetSubscriptionRequest %+v", req)
+	log.Infof("Received GetSubscriptionRequest %+v", req)
 	sub, err := s.subscriptionStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetSubscriptionRequest %+v failed: %v", req, err)
@@ -81,13 +81,13 @@ func (s *Server) GetSubscription(ctx context.Context, req *subapi.GetSubscriptio
 	res := &subapi.GetSubscriptionResponse{
 		Subscription: sub,
 	}
-	log.Debugf("Sending GetSubscriptionResponse %+v", res)
+	log.Infof("Sending GetSubscriptionResponse %+v", res)
 	return res, nil
 }
 
 // RemoveSubscription removes a subscription
 func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubscriptionRequest) (*subapi.RemoveSubscriptionResponse, error) {
-	log.Debugf("Received RemoveSubscriptionRequest %+v", req)
+	log.Infof("Received RemoveSubscriptionRequest %+v", req)
 	sub, err := s.subscriptionStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
@@ -100,13 +100,13 @@ func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubsc
 		return nil, err
 	}
 	res := &subapi.RemoveSubscriptionResponse{}
-	log.Debugf("Sending RemoveSubscriptionResponse %+v", res)
+	log.Infof("Sending RemoveSubscriptionResponse %+v", res)
 	return res, nil
 }
 
 // ListSubscriptions returns the list of current existing subscriptions
 func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscriptionsRequest) (*subapi.ListSubscriptionsResponse, error) {
-	log.Debugf("Received ListSubscriptionsRequest %+v", req)
+	log.Infof("Received ListSubscriptionsRequest %+v", req)
 	subs, err := s.subscriptionStore.List(ctx)
 	if err != nil {
 		log.Warnf("ListSubscriptionsRequest %+v failed: %v", req, err)
@@ -123,14 +123,14 @@ func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscrip
 	res := &subapi.ListSubscriptionsResponse{
 		Subscriptions: filtered,
 	}
-	log.Debugf("Sending ListSubscriptionsResponse %+v", res)
+	log.Infof("Sending ListSubscriptionsResponse %+v", res)
 	return res, nil
 }
 
 // WatchSubscriptions streams subscription changes
 // WatchTerminations streams termination end-point changes
 func (s *Server) WatchSubscriptions(req *subapi.WatchSubscriptionsRequest, server subapi.E2SubscriptionService_WatchSubscriptionsServer) error {
-	log.Debugf("Received WatchTerminationsRequest %+v", req)
+	log.Infof("Received WatchTerminationsRequest %+v", req)
 	var watchOpts []store.WatchOption
 	if !req.Noreplay {
 		watchOpts = append(watchOpts, store.WithReplay())
@@ -156,7 +156,7 @@ func (s *Server) Stream(server subapi.E2SubscriptionService_WatchSubscriptionsSe
 			Event: event,
 		}
 
-		log.Debugf("Sending WatchSubscriptionsResponse %+v", res)
+		log.Infof("Sending WatchSubscriptionsResponse %+v", res)
 		if err := server.Send(res); err != nil {
 			log.Warnf("WatchSubscriptionsResponse %+v failed: %v", res, err)
 			return err

@@ -18,7 +18,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 )
 
-var log = logging.GetLogger("endpoint", "controller")
+var log = logging.GetLogger("controller", "endpoint")
 
 const defaultTimeout = 30 * time.Second
 
@@ -65,12 +65,15 @@ func (r *Reconciler) Reconcile(id controller.ID) (controller.Result, error) {
 	_, err = r.client.CoreV1().Pods(r.namespace).Get(string(endpoint.ID), metav1.GetOptions{})
 	if err != nil {
 		if !errors.IsNotFound(err) {
+			log.Warnf("Failed to reconcile Endpoint %+v: %s", endpoint, err)
 			return controller.Result{}, err
 		}
 
 		// If the pod not exist, delete the endpoint
+		log.Infof("Deleting orphaned Endpoint %+v", endpoint)
 		err := r.endpoints.Delete(ctx, endpoint.ID)
 		if err != nil {
+			log.Warnf("Failed to delete orphaned Endpoint %+v: %s", endpoint, err)
 			return controller.Result{}, err
 		}
 	}

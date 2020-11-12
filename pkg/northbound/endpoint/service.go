@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var log = logging.GetLogger("northbound", "ricapi", "registry")
+var log = logging.GetLogger("northbound", "endpoint")
 
 // NewService creates a new registry service
 func NewService(store store.Store) northbound.Service {
@@ -54,7 +54,7 @@ func CreateE2RegistryClient(cc *grpc.ClientConn) regapi.E2RegistryServiceClient 
 
 // AddTermination adds an E2 end-point
 func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationRequest) (*regapi.AddTerminationResponse, error) {
-	log.Debugf("Received AddTerminationRequest %+v", req)
+	log.Infof("Received AddTerminationRequest %+v", req)
 	ep := req.Endpoint
 	err := s.endPointStore.Create(ctx, ep)
 	if err != nil {
@@ -62,13 +62,13 @@ func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationR
 		return nil, err
 	}
 	res := &regapi.AddTerminationResponse{}
-	log.Debugf("Sending AddTerminationResponse %+v", res)
+	log.Infof("Sending AddTerminationResponse %+v", res)
 	return res, nil
 }
 
 // GetTermination retrieves information about a specific termination end-point
 func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationRequest) (*regapi.GetTerminationResponse, error) {
-	log.Debugf("Received GetSubscriptionRequest %+v", req)
+	log.Infof("Received GetSubscriptionRequest %+v", req)
 	ep, err := s.endPointStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetTerminatonRequest %+v failed: %v", req, err)
@@ -77,26 +77,26 @@ func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationR
 	res := &regapi.GetTerminationResponse{
 		Endpoint: ep,
 	}
-	log.Debugf("Sending GetTerminationResponse %+v", res)
+	log.Infof("Sending GetTerminationResponse %+v", res)
 	return res, nil
 }
 
 // RemoveTermination removes a subscription
 func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTerminationRequest) (*regapi.RemoveTerminationResponse, error) {
-	log.Debugf("Received RemoveTerminationRequest %+v", req)
+	log.Infof("Received RemoveTerminationRequest %+v", req)
 	err := s.endPointStore.Delete(ctx, req.ID)
 	if err != nil {
 		log.Warnf("RemoveTerminationRequest %+v failed: %v", req, err)
 		return nil, err
 	}
 	res := &regapi.RemoveTerminationResponse{}
-	log.Debugf("Sending RemoveTerminationResponse %+v", res)
+	log.Infof("Sending RemoveTerminationResponse %+v", res)
 	return res, nil
 }
 
 // ListTerminations returns the list of current existing termination end-points
 func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminationsRequest) (*regapi.ListTerminationsResponse, error) {
-	log.Debugf("Received ListTerminationsRequest %+v", req)
+	log.Infof("Received ListTerminationsRequest %+v", req)
 	eps, err := s.endPointStore.List(ctx)
 	if err != nil {
 		log.Warnf("ListTerminationsRequest %+v failed: %v", req, err)
@@ -106,13 +106,13 @@ func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminati
 	res := &regapi.ListTerminationsResponse{
 		Endpoints: eps,
 	}
-	log.Debugf("Sending ListTerminationsResponse %+v", res)
+	log.Infof("Sending ListTerminationsResponse %+v", res)
 	return res, nil
 }
 
 // WatchTerminations streams termination end-point changes
 func (s *Server) WatchTerminations(req *regapi.WatchTerminationsRequest, server regapi.E2RegistryService_WatchTerminationsServer) error {
-	log.Debugf("Received WatchTerminationsRequest %+v", req)
+	log.Infof("Received WatchTerminationsRequest %+v", req)
 	var watchOpts []store.WatchOption
 	if !req.Noreplay {
 		watchOpts = append(watchOpts, store.WithReplay())
@@ -134,7 +134,7 @@ func (s *Server) Stream(server regapi.E2RegistryService_WatchTerminationsServer,
 			Event: event,
 		}
 
-		log.Debugf("Sending WatchTerminationsResponse %+v", res)
+		log.Infof("Sending WatchTerminationsResponse %+v", res)
 		if err := server.Send(res); err != nil {
 			log.Warnf("WatchTerminationsResponse %+v failed: %v", res, err)
 			return err

@@ -46,7 +46,7 @@ type Server struct {
 }
 
 func (s *Server) GetSubscriptionTask(ctx context.Context, req *taskapi.GetSubscriptionTaskRequest) (*taskapi.GetSubscriptionTaskResponse, error) {
-	log.Debugf("Received GetSubscriptionTaskRequest %+v", req)
+	log.Infof("Received GetSubscriptionTaskRequest %+v", req)
 	task, err := s.store.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetSubscriptionTaskRequest %+v failed: %v", req, err)
@@ -55,12 +55,12 @@ func (s *Server) GetSubscriptionTask(ctx context.Context, req *taskapi.GetSubscr
 	res := &taskapi.GetSubscriptionTaskResponse{
 		Task: task,
 	}
-	log.Debugf("Sending GetSubscriptionTaskResponse %+v", res)
+	log.Infof("Sending GetSubscriptionTaskResponse %+v", res)
 	return res, nil
 }
 
 func (s *Server) ListSubscriptionTasks(ctx context.Context, req *taskapi.ListSubscriptionTasksRequest) (*taskapi.ListSubscriptionTasksResponse, error) {
-	log.Debugf("Received ListSubscriptionTasksRequest %+v", req)
+	log.Infof("Received ListSubscriptionTasksRequest %+v", req)
 	tasks, err := s.store.List(ctx)
 	if err != nil {
 		log.Warnf("ListSubscriptionTasksRequest %+v failed: %v", req, err)
@@ -70,12 +70,12 @@ func (s *Server) ListSubscriptionTasks(ctx context.Context, req *taskapi.ListSub
 	res := &taskapi.ListSubscriptionTasksResponse{
 		Task: tasks,
 	}
-	log.Debugf("Sending ListSubscriptionTasksResponse %+v", res)
+	log.Infof("Sending ListSubscriptionTasksResponse %+v", res)
 	return res, nil
 }
 
 func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksRequest, server taskapi.E2SubscriptionTaskService_WatchSubscriptionTasksServer) error {
-	log.Debugf("Received WatchSubscriptionTasksRequest %+v", req)
+	log.Infof("Received WatchSubscriptionTasksRequest %+v", req)
 	var watchOpts []store.WatchOption
 	if !req.Noreplay {
 		watchOpts = append(watchOpts, store.WithReplay())
@@ -92,7 +92,7 @@ func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksReque
 			Event: event,
 		}
 
-		log.Debugf("Sending WatchSubscriptionTasksResponse %+v", res)
+		log.Infof("Sending WatchSubscriptionTasksResponse %+v", res)
 		if err := server.Send(res); err != nil {
 			log.Warnf("WatchSubscriptionTasksResponse %+v failed: %v", res, err)
 			return err
@@ -102,13 +102,13 @@ func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksReque
 }
 
 func (s *Server) UpdateSubscriptionTask(ctx context.Context, req *taskapi.UpdateSubscriptionTaskRequest) (*taskapi.UpdateSubscriptionTaskResponse, error) {
-	log.Debugf("Received UpdateSubscriptionTaskRequest %+v", req)
+	log.Infof("Received UpdateSubscriptionTaskRequest %+v", req)
 	err := s.store.Update(ctx, req.Task)
 	if err != nil {
 		log.Warnf("UpdateSubscriptionTaskRequest %+v failed: %v", req, err)
 		return nil, err
 	}
 	res := &taskapi.UpdateSubscriptionTaskResponse{}
-	log.Debugf("Sending UpdateSubscriptionTaskResponse %+v", res)
+	log.Infof("Sending UpdateSubscriptionTaskResponse %+v", res)
 	return res, nil
 }

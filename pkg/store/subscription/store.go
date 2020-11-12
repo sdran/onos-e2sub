@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"github.com/atomix/go-client/pkg/client/util/net"
+	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"io"
 	"time"
 
@@ -18,6 +19,8 @@ import (
 	"github.com/onosproject/onos-e2sub/pkg/config"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
 )
+
+var log = logging.GetLogger("store", "subscription")
 
 // NewAtomixStore returns a new persistent Store
 func NewAtomixStore() (Store, error) {
@@ -120,14 +123,17 @@ func (s *atomixStore) Create(ctx context.Context, sub *subapi.Subscription) erro
 		return errors.New("ID cannot be empty")
 	}
 
+	log.Infof("Creating Subscription %+v", sub)
 	bytes, err := proto.Marshal(sub)
 	if err != nil {
+		log.Errorf("Failed to create Subscription %+v: %s", sub, err)
 		return err
 	}
 
 	// Create the subscription in the map only if it does not already exist
 	entry, err := s.subscriptions.Put(ctx, string(sub.ID), bytes, _map.IfNotSet())
 	if err != nil {
+		log.Errorf("Failed to create Subscription %+v: %s", sub, err)
 		return err
 	}
 	sub.Revision = subapi.Revision(entry.Version)
@@ -142,14 +148,17 @@ func (s *atomixStore) Update(ctx context.Context, sub *subapi.Subscription) erro
 		return errors.New("object must contain a revision on update")
 	}
 
+	log.Infof("Updating Subscription %+v", sub)
 	bytes, err := proto.Marshal(sub)
 	if err != nil {
+		log.Errorf("Failed to update Subscription %+v: %s", sub, err)
 		return err
 	}
 
 	// Update the subscription in the map
 	entry, err := s.subscriptions.Put(ctx, string(sub.ID), bytes, _map.IfVersion(_map.Version(sub.Revision)))
 	if err != nil {
+		log.Errorf("Failed to update Subscription %+v: %s", sub, err)
 		return err
 	}
 	sub.Revision = subapi.Revision(entry.Version)
@@ -175,9 +184,13 @@ func (s *atomixStore) Delete(ctx context.Context, id subapi.ID) error {
 	if id == "" {
 		return errors.New("ID cannot be empty")
 	}
-
+	log.Infof("Deleting Subscription %s", id)
 	_, err := s.subscriptions.Remove(ctx, string(id))
-	return err
+	if err != nil {
+		log.Errorf("Failed to delete Subscription %s: %s", id, err)
+		return err
+	}
+	return nil
 }
 
 func (s *atomixStore) List(ctx context.Context) ([]subapi.Subscription, error) {

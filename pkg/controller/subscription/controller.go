@@ -79,11 +79,13 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 	// List the termination endpoints
 	endpoints, err := r.endpoints.List(ctx)
 	if err != nil {
+		log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 		return controller.Result{}, err
 	}
 
 	// Get the first termination endpoint
 	if len(endpoints) == 0 {
+		log.Warnf("No endpoints found for Subscription %+v", sub)
 		return controller.Result{}, nil
 	}
 
@@ -94,10 +96,12 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 	taskID := taskapi.ID(fmt.Sprintf("%s:%s", sub.ID, endpoint.ID))
 	task, err := r.tasks.Get(ctx, taskID)
 	if err != nil {
+		log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 		return controller.Result{}, err
 	}
 
 	if task == nil {
+		log.Infof("Assigning Subscription %+v to TerminationEndpoint %+v", sub, endpoint)
 		task := &taskapi.SubscriptionTask{
 			ID:                    taskapi.ID(fmt.Sprintf("%s:%s", sub.ID, endpoint.ID)),
 			SubscriptionID:        sub.ID,
@@ -105,6 +109,7 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 		}
 		err := r.tasks.Create(ctx, task)
 		if err != nil {
+			log.Warnf("Failed to assign Subscription %+v to TerminationEndpoint %+v: %s", sub, endpoint, err)
 			return controller.Result{}, err
 		}
 	}
@@ -118,6 +123,7 @@ func (r *Reconciler) reconcileDeletedSubscription(sub *subapi.Subscription) (con
 	// List the subscription tasks
 	tasks, err := r.tasks.List(ctx)
 	if err != nil {
+		log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 		return controller.Result{}, err
 	}
 
@@ -131,8 +137,10 @@ func (r *Reconciler) reconcileDeletedSubscription(sub *subapi.Subscription) (con
 
 	// If the subscription tasks are empty, delete the subscription
 	if len(subTasks) == 0 {
+		log.Infof("Deleting Subscription %+v", sub)
 		err := r.subs.Delete(ctx, sub.ID)
 		if err != nil {
+			log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 			return controller.Result{}, err
 		}
 		return controller.Result{}, nil
@@ -141,16 +149,20 @@ func (r *Reconciler) reconcileDeletedSubscription(sub *subapi.Subscription) (con
 	// Ensure all subscription tasks are marked closed and delete tasks already closed
 	for _, task := range subTasks {
 		if task.Lifecycle.Phase != taskapi.Phase_CLOSE {
+			log.Infof("Closing SubscriptionTask %+v", task)
 			task.Lifecycle.Phase = taskapi.Phase_CLOSE
 			task.Lifecycle.Status = taskapi.Status_PENDING
 			err := r.tasks.Update(ctx, &task)
 			if err != nil {
+				log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 				return controller.Result{}, err
 			}
 		}
 		if task.Lifecycle.Phase == taskapi.Phase_CLOSE && task.Lifecycle.Status == taskapi.Status_COMPLETE {
+			log.Infof("Deleting SubscriptionTask %+v", task)
 			err = r.tasks.Delete(ctx, task.ID)
 			if err != nil {
+				log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 				return controller.Result{}, err
 			}
 		}

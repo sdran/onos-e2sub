@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"github.com/atomix/go-client/pkg/client/util/net"
+	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"io"
 	"time"
 
@@ -18,6 +19,8 @@ import (
 	"github.com/onosproject/onos-e2sub/pkg/config"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
 )
+
+var log = logging.GetLogger("store", "task")
 
 // NewAtomixStore returns a new persistent Store
 func NewAtomixStore() (Store, error) {
@@ -121,14 +124,17 @@ func (s *atomixStore) Create(ctx context.Context, task *taskapi.SubscriptionTask
 		return errors.New("ID cannot be empty")
 	}
 
+	log.Infof("Creating SubscriptionTask %+v", task)
 	bytes, err := proto.Marshal(task)
 	if err != nil {
+		log.Errorf("Failed to create SubscriptionTask %+v: %s", task, err)
 		return err
 	}
 
 	// Create the task in the map only if it does not already exist
 	entry, err := s.tasks.Put(ctx, string(task.ID), bytes, _map.IfNotSet())
 	if err != nil {
+		log.Errorf("Failed to create SubscriptionTask %+v: %s", task, err)
 		return err
 	}
 	task.Revision = taskapi.Revision(entry.Version)
@@ -143,14 +149,17 @@ func (s *atomixStore) Update(ctx context.Context, task *taskapi.SubscriptionTask
 		return errors.New("object must contain a revision on update")
 	}
 
+	log.Infof("Updating SubscriptionTask %+v", task)
 	bytes, err := proto.Marshal(task)
 	if err != nil {
+		log.Errorf("Failed to update SubscriptionTask %+v: %s", task, err)
 		return err
 	}
 
 	// Update the task in the map
 	entry, err := s.tasks.Put(ctx, string(task.ID), bytes, _map.IfVersion(_map.Version(task.Revision)))
 	if err != nil {
+		log.Errorf("Failed to update SubscriptionTask %+v: %s", task, err)
 		return err
 	}
 	task.Revision = taskapi.Revision(entry.Version)
@@ -177,8 +186,13 @@ func (s *atomixStore) Delete(ctx context.Context, id taskapi.ID) error {
 		return errors.New("ID cannot be empty")
 	}
 
+	log.Infof("Deleting SubscriptionTask %s", id)
 	_, err := s.tasks.Remove(ctx, string(id))
-	return err
+	if err != nil {
+		log.Errorf("Failed to delete SubscriptionTask %s: %s", id, err)
+		return err
+	}
+	return nil
 }
 
 func (s *atomixStore) List(ctx context.Context) ([]taskapi.SubscriptionTask, error) {
