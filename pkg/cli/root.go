@@ -28,13 +28,16 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "e2sub {get} [args]",
+		Use:   "e2sub {get|add} [args]",
 		Short: "ONOS e2sub subsystem commands",
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
 	cmd.AddCommand(cli.GetConfigCommand())
 	cmd.AddCommand(getGetCommand())
+	cmd.AddCommand(getAddCommand())
+	cmd.AddCommand(getRemoveCommand())
+	cmd.AddCommand(getListCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }

@@ -6,6 +6,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"text/tabwriter"
@@ -21,11 +22,11 @@ const (
 )
 
 func displayHeaders(writer io.Writer) {
-	_, _ = fmt.Fprintln(writer, registrationHeaders)
+	_, _ = fmt.Fprint(writer, registrationHeaders)
 }
 
 func displayEndPoint(writer io.Writer, ep regapi.TerminationEndpoint) {
-	_, _ = fmt.Fprintf(writer, endPointFormat, ep.ID, ep.ID, ep.Port)
+	_, _ = fmt.Fprintf(writer, endPointFormat, ep.ID, ep.IP, ep.Port)
 }
 
 func getListEndPointsCommand() *cobra.Command {
@@ -35,6 +36,41 @@ func getListEndPointsCommand() *cobra.Command {
 		RunE:  runListEndpointsCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	return cmd
+}
+
+func getAddEndPointCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "endpoint",
+		Short: "Add endpoint",
+		RunE:  runAddEndpointCommand,
+	}
+	cmd.Flags().String("IP", "", "IP address")
+	cmd.Flags().Int32("port", 0, "Port number")
+	cmd.Flags().String("ID", "", "Identifier")
+
+	return cmd
+}
+
+func getRemoveEndPointCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "endpoint",
+		Short: "Add endpoint",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runRemoveEndpointCommand,
+	}
+
+	return cmd
+}
+
+func getGetEndPointCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "endpoint",
+		Short: "Get endpoint",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runGetEndpointCommand,
+	}
+
 	return cmd
 }
 
@@ -51,7 +87,6 @@ func runListEndpointsCommand(cmd *cobra.Command, args []string) error {
 
 	if !noHeaders {
 		displayHeaders(writer)
-		_ = writer.Flush()
 	}
 
 	request := regapi.ListTerminationsRequest{}
@@ -67,6 +102,91 @@ func runListEndpointsCommand(cmd *cobra.Command, args []string) error {
 		displayEndPoint(writer, ep)
 	}
 
+	_ = writer.Flush()
+
+	return nil
+}
+
+func runAddEndpointCommand(cmd *cobra.Command, args []string) error {
+	IP, _ := cmd.Flags().GetString("IP")
+	if IP == "" {
+		return errors.New("IP address must be specified with --IP")
+	}
+	ID, _ := cmd.Flags().GetString("ID")
+	if ID == "" {
+		return errors.New("identifier must be specified with --ID")
+	}
+	port, _ := cmd.Flags().GetInt32("port")
+	if port == 0 {
+		return errors.New("port must be specified with --port")
+	}
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	ep := regapi.TerminationEndpoint{
+		ID:   regapi.ID(ID),
+		IP:   regapi.IP(IP),
+		Port: regapi.Port(port),
+	}
+	request := regapi.AddTerminationRequest{Endpoint: &ep}
+
+	client := regapi.NewE2RegistryServiceClient(conn)
+
+	_, err = client.AddTermination(context.Background(), &request)
+
+	return err
+}
+
+func runRemoveEndpointCommand(cmd *cobra.Command, args []string) error {
+	ID := args[0]
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	request := regapi.RemoveTerminationRequest{ID: regapi.ID(ID)}
+
+	client := regapi.NewE2RegistryServiceClient(conn)
+
+	_, err = client.RemoveTermination(context.Background(), &request)
+
+	return err
+}
+
+func runGetEndpointCommand(cmd *cobra.Command, args []string) error {
+	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	ID := regapi.ID(args[0])
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	outputWriter := cli.GetOutput()
+	writer := new(tabwriter.Writer)
+	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+
+	if !noHeaders {
+		displayHeaders(writer)
+	}
+
+	request := regapi.GetTerminationRequest{ID: ID}
+
+	client := regapi.NewE2RegistryServiceClient(conn)
+
+	response, err := client.GetTermination(context.Background(), &request)
+	if err != nil {
+		return err
+	}
+
+	if response.Endpoint == nil {
+		return errors.New("endpoint not found")
+	}
+
+	displayEndPoint(writer, *response.Endpoint)
 	_ = writer.Flush()
 
 	return nil
