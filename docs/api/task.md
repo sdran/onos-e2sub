@@ -101,6 +101,12 @@ Lifecycle is a subscription task status
 ListSubscriptionTasksRequest is a request to list all available SubscriptionTasks
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subscription_id | [string](#string) |  |  |
+| endpoint_id | [string](#string) |  |  |
+
+
 
 
 
@@ -113,7 +119,7 @@ ListSubscriptionTasksResponse is a response to list all available SubscriptionTa
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| task | [SubscriptionTask](#task.v1beta1.SubscriptionTask) | repeated |  |
+| tasks | [SubscriptionTask](#task.v1beta1.SubscriptionTask) | repeated |  |
 
 
 
@@ -131,7 +137,7 @@ SubscriptionTask is a task representing a subscription between an E2 termination
 | id | [string](#string) |  |  |
 | revision | [uint64](#uint64) |  |  |
 | subscription_id | [string](#string) |  |  |
-| termination_endpoint_id | [string](#string) |  |  |
+| endpoint_id | [string](#string) |  |  |
 | lifecycle | [Lifecycle](#task.v1beta1.Lifecycle) |  |  |
 
 
@@ -173,6 +179,8 @@ WatchSubscriptionTasksRequest is a request to receive a stream of all Subscripti
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | noreplay | [bool](#bool) |  |  |
+| subscription_id | [string](#string) |  |  |
+| endpoint_id | [string](#string) |  |  |
 
 
 

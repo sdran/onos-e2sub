@@ -67,8 +67,19 @@ func (s *Server) ListSubscriptionTasks(ctx context.Context, req *taskapi.ListSub
 		return nil, err
 	}
 
+	filtered := make([]taskapi.SubscriptionTask, 0, len(tasks))
+	for _, task := range tasks {
+		if req.SubscriptionID != "" && task.SubscriptionID != req.SubscriptionID {
+			continue
+		}
+		if req.EndpointID != "" && task.EndpointID != req.EndpointID {
+			continue
+		}
+		filtered = append(filtered, task)
+	}
+
 	res := &taskapi.ListSubscriptionTasksResponse{
-		Task: tasks,
+		Tasks: filtered,
 	}
 	log.Infof("Sending ListSubscriptionTasksResponse %+v", res)
 	return res, nil
@@ -88,6 +99,13 @@ func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksReque
 	}
 
 	for event := range ch {
+		if req.SubscriptionID != "" && event.Task.SubscriptionID != req.SubscriptionID {
+			continue
+		}
+		if req.EndpointID != "" && event.Task.EndpointID != req.EndpointID {
+			continue
+		}
+
 		res := &taskapi.WatchSubscriptionTasksResponse{
 			Event: event,
 		}

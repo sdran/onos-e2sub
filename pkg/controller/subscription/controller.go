@@ -18,7 +18,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 )
 
-var log = logging.GetLogger("subscription", "controller")
+var log = logging.GetLogger("controller", "subscription")
 
 const defaultTimeout = 30 * time.Second
 
@@ -103,9 +103,9 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 	if task == nil {
 		log.Infof("Assigning Subscription %+v to TerminationEndpoint %+v", sub, endpoint)
 		task := &taskapi.SubscriptionTask{
-			ID:                    taskapi.ID(fmt.Sprintf("%s:%s", sub.ID, endpoint.ID)),
-			SubscriptionID:        sub.ID,
-			TerminationEndpointID: endpoint.ID,
+			ID:             taskapi.ID(fmt.Sprintf("%s:%s", sub.ID, endpoint.ID)),
+			SubscriptionID: sub.ID,
+			EndpointID:     endpoint.ID,
 		}
 		err := r.tasks.Create(ctx, task)
 		if err != nil {
