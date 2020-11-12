@@ -5,6 +5,7 @@
 package manager
 
 import (
+	endpointctrl "github.com/onosproject/onos-e2sub/pkg/controller/endpoint"
 	subctrl "github.com/onosproject/onos-e2sub/pkg/controller/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/endpoint"
 	"github.com/onosproject/onos-e2sub/pkg/northbound/subscription"
@@ -14,6 +15,8 @@ import (
 	taskstore "github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var log = logging.GetLogger("manager")
@@ -67,7 +70,7 @@ func (m *Manager) startNorthboundServer() error {
 		true,
 		northbound.SecurityConfig{}))
 
-	regStore, err := regstore.NewAtomixStore()
+	endpointStore, err := regstore.NewAtomixStore()
 	if err != nil {
 		return err
 	}
@@ -82,14 +85,30 @@ func (m *Manager) startNorthboundServer() error {
 		return err
 	}
 
-	subController := subctrl.NewController(subStore, regStore, taskStore)
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return err
+	}
+
+	kubeClient, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+
+	endpointController := endpointctrl.NewController(endpointStore, kubeClient)
+	err = endpointController.Start()
+	if err != nil {
+		return err
+	}
+
+	subController := subctrl.NewController(subStore, endpointStore, taskStore)
 	err = subController.Start()
 	if err != nil {
 		return err
 	}
 
 	s.AddService(logging.Service{})
-	s.AddService(endpoint.NewService(regStore))
+	s.AddService(endpoint.NewService(endpointStore))
 	s.AddService(subscription.NewService(subStore))
 	s.AddService(task.NewService(taskStore))
 
