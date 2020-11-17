@@ -8,6 +8,7 @@ import (
 	"context"
 	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -63,7 +64,8 @@ func TestEndPointStore(t *testing.T) {
 	err = store1.Delete(context.TODO(), ep2.ID)
 	assert.NoError(t, err)
 	ep, err = store2.Get(context.TODO(), "ep2")
-	assert.NoError(t, err)
+	assert.Error(t, err)
+	assert.True(t, errors.IsNotFound(err))
 	assert.Nil(t, ep)
 
 	_ = &regapi.TerminationEndpoint{ID: "ep2"}

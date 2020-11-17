@@ -6,8 +6,8 @@ package task
 
 import (
 	"context"
-	"errors"
 	"github.com/atomix/go-client/pkg/client/util/net"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"io"
 	"time"
@@ -121,76 +121,73 @@ type atomixStore struct {
 
 func (s *atomixStore) Create(ctx context.Context, task *taskapi.SubscriptionTask) error {
 	if task.ID == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 
 	log.Infof("Creating SubscriptionTask %+v", task)
 	bytes, err := proto.Marshal(task)
 	if err != nil {
 		log.Errorf("Failed to create SubscriptionTask %+v: %s", task, err)
-		return err
+		return errors.NewInvalid(err.Error())
 	}
 
 	// Create the task in the map only if it does not already exist
 	entry, err := s.tasks.Put(ctx, string(task.ID), bytes, _map.IfNotSet())
 	if err != nil {
 		log.Errorf("Failed to create SubscriptionTask %+v: %s", task, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	task.Revision = taskapi.Revision(entry.Version)
-	return err
+	return nil
 }
 
 func (s *atomixStore) Update(ctx context.Context, task *taskapi.SubscriptionTask) error {
 	if task.ID == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 	if task.Revision == 0 {
-		return errors.New("object must contain a revision on update")
+		return errors.NewInvalid("object must contain a revision on update")
 	}
 
 	log.Infof("Updating SubscriptionTask %+v", task)
 	bytes, err := proto.Marshal(task)
 	if err != nil {
 		log.Errorf("Failed to update SubscriptionTask %+v: %s", task, err)
-		return err
+		return errors.NewInvalid(err.Error())
 	}
 
 	// Update the task in the map
 	entry, err := s.tasks.Put(ctx, string(task.ID), bytes, _map.IfVersion(_map.Version(task.Revision)))
 	if err != nil {
 		log.Errorf("Failed to update SubscriptionTask %+v: %s", task, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	task.Revision = taskapi.Revision(entry.Version)
-	return err
+	return nil
 }
 
 func (s *atomixStore) Get(ctx context.Context, id taskapi.ID) (*taskapi.SubscriptionTask, error) {
 	if id == "" {
-		return nil, errors.New("ID cannot be empty")
+		return nil, errors.NewInvalid("ID cannot be empty")
 	}
 
 	entry, err := s.tasks.Get(ctx, string(id))
 	if err != nil {
-		return nil, err
-	}
-	if entry == nil {
-		return nil, nil
+		return nil, errors.FromAtomix(err)
 	}
 	return decodeObject(entry)
 }
 
 func (s *atomixStore) Delete(ctx context.Context, id taskapi.ID) error {
 	if id == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 
 	log.Infof("Deleting SubscriptionTask %s", id)
 	_, err := s.tasks.Remove(ctx, string(id))
 	if err != nil {
 		log.Errorf("Failed to delete SubscriptionTask %s: %s", id, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	return nil
 }
@@ -198,7 +195,7 @@ func (s *atomixStore) Delete(ctx context.Context, id taskapi.ID) error {
 func (s *atomixStore) List(ctx context.Context) ([]taskapi.SubscriptionTask, error) {
 	mapCh := make(chan *_map.Entry)
 	if err := s.tasks.Entries(context.Background(), mapCh); err != nil {
-		return nil, err
+		return nil, errors.FromAtomix(err)
 	}
 
 	tasks := make([]taskapi.SubscriptionTask, 0)
@@ -218,7 +215,7 @@ func (s *atomixStore) Watch(ctx context.Context, ch chan<- taskapi.Event, opts .
 
 	mapCh := make(chan *_map.Event)
 	if err := s.tasks.Watch(context.Background(), mapCh, watchOpts...); err != nil {
-		return err
+		return errors.FromAtomix(err)
 	}
 
 	go func() {
@@ -259,7 +256,7 @@ func (s *atomixStore) Close() error {
 func decodeObject(entry *_map.Entry) (*taskapi.SubscriptionTask, error) {
 	task := &taskapi.SubscriptionTask{}
 	if err := proto.Unmarshal(entry.Value, task); err != nil {
-		return nil, err
+		return nil, errors.NewInvalid(err.Error())
 	}
 	task.ID = taskapi.ID(entry.Key)
 	task.Revision = taskapi.Revision(entry.Version)

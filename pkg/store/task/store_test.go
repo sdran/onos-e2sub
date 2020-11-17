@@ -8,6 +8,7 @@ import (
 	"context"
 	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -111,7 +112,8 @@ func TestSubscriptionStore(t *testing.T) {
 	err = store1.Delete(context.TODO(), task2.ID)
 	assert.NoError(t, err)
 	task2, err = store2.Get(context.TODO(), "task-2")
-	assert.NoError(t, err)
+	assert.Error(t, err)
+	assert.True(t, errors.IsNotFound(err))
 	assert.Nil(t, task2)
 
 	task := &taskapi.SubscriptionTask{

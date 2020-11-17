@@ -55,7 +55,10 @@ func (r *Reconciler) Reconcile(id controller.ID) (controller.Result, error) {
 
 	// Get the endpoint from the store
 	endpoint, err := r.endpoints.Get(ctx, id.Value.(endpointapi.ID))
-	if err != nil || endpoint == nil {
+	if err != nil {
+		if errors.IsNotFound(err) {
+			return controller.Result{}, nil
+		}
 		return controller.Result{}, err
 	}
 
@@ -72,7 +75,7 @@ func (r *Reconciler) Reconcile(id controller.ID) (controller.Result, error) {
 		// If the pod not exist, delete the endpoint
 		log.Infof("Deleting orphaned Endpoint %+v", endpoint)
 		err := r.endpoints.Delete(ctx, endpoint.ID)
-		if err != nil {
+		if err != nil && !errors.IsNotFound(err) {
 			log.Warnf("Failed to delete orphaned Endpoint %+v: %s", endpoint, err)
 			return controller.Result{}, err
 		}

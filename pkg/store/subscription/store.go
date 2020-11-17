@@ -6,8 +6,8 @@ package subscription
 
 import (
 	"context"
-	"errors"
 	"github.com/atomix/go-client/pkg/client/util/net"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"io"
 	"time"
@@ -120,75 +120,72 @@ type atomixStore struct {
 
 func (s *atomixStore) Create(ctx context.Context, sub *subapi.Subscription) error {
 	if sub.ID == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 
 	log.Infof("Creating Subscription %+v", sub)
 	bytes, err := proto.Marshal(sub)
 	if err != nil {
 		log.Errorf("Failed to create Subscription %+v: %s", sub, err)
-		return err
+		return errors.NewInvalid(err.Error())
 	}
 
 	// Create the subscription in the map only if it does not already exist
 	entry, err := s.subscriptions.Put(ctx, string(sub.ID), bytes, _map.IfNotSet())
 	if err != nil {
 		log.Errorf("Failed to create Subscription %+v: %s", sub, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	sub.Revision = subapi.Revision(entry.Version)
-	return err
+	return nil
 }
 
 func (s *atomixStore) Update(ctx context.Context, sub *subapi.Subscription) error {
 	if sub.ID == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 	if sub.Revision == 0 {
-		return errors.New("object must contain a revision on update")
+		return errors.NewInvalid("object must contain a revision on update")
 	}
 
 	log.Infof("Updating Subscription %+v", sub)
 	bytes, err := proto.Marshal(sub)
 	if err != nil {
 		log.Errorf("Failed to update Subscription %+v: %s", sub, err)
-		return err
+		return errors.NewInvalid(err.Error())
 	}
 
 	// Update the subscription in the map
 	entry, err := s.subscriptions.Put(ctx, string(sub.ID), bytes, _map.IfVersion(_map.Version(sub.Revision)))
 	if err != nil {
 		log.Errorf("Failed to update Subscription %+v: %s", sub, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	sub.Revision = subapi.Revision(entry.Version)
-	return err
+	return nil
 }
 
 func (s *atomixStore) Get(ctx context.Context, id subapi.ID) (*subapi.Subscription, error) {
 	if id == "" {
-		return nil, errors.New("ID cannot be empty")
+		return nil, errors.NewInvalid("ID cannot be empty")
 	}
 
 	entry, err := s.subscriptions.Get(ctx, string(id))
 	if err != nil {
-		return nil, err
-	}
-	if entry == nil {
-		return nil, nil
+		return nil, errors.FromAtomix(err)
 	}
 	return decodeObject(entry)
 }
 
 func (s *atomixStore) Delete(ctx context.Context, id subapi.ID) error {
 	if id == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 	log.Infof("Deleting Subscription %s", id)
 	_, err := s.subscriptions.Remove(ctx, string(id))
 	if err != nil {
 		log.Errorf("Failed to delete Subscription %s: %s", id, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	return nil
 }
@@ -196,7 +193,7 @@ func (s *atomixStore) Delete(ctx context.Context, id subapi.ID) error {
 func (s *atomixStore) List(ctx context.Context) ([]subapi.Subscription, error) {
 	mapCh := make(chan *_map.Entry)
 	if err := s.subscriptions.Entries(context.Background(), mapCh); err != nil {
-		return nil, err
+		return nil, errors.FromAtomix(err)
 	}
 
 	subs := make([]subapi.Subscription, 0)
@@ -216,7 +213,7 @@ func (s *atomixStore) Watch(ctx context.Context, ch chan<- subapi.Event, opts ..
 
 	mapCh := make(chan *_map.Event)
 	if err := s.subscriptions.Watch(context.Background(), mapCh, watchOpts...); err != nil {
-		return err
+		return errors.FromAtomix(err)
 	}
 
 	go func() {
@@ -253,7 +250,7 @@ func (s *atomixStore) Close() error {
 func decodeObject(entry *_map.Entry) (*subapi.Subscription, error) {
 	sub := &subapi.Subscription{}
 	if err := proto.Unmarshal(entry.Value, sub); err != nil {
-		return nil, err
+		return nil, errors.NewInvalid(err.Error())
 	}
 	sub.ID = subapi.ID(entry.Key)
 	sub.Revision = subapi.Revision(entry.Version)

@@ -6,8 +6,8 @@ package endpoint
 
 import (
 	"context"
-	"errors"
 	"github.com/atomix/go-client/pkg/client/util/net"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"io"
 	"time"
@@ -117,50 +117,47 @@ type atomixStore struct {
 
 func (s *atomixStore) Create(ctx context.Context, ep *epapi.TerminationEndpoint) error {
 	if ep.ID == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 
 	log.Infof("Creating TerminationEndpoint %+v", ep)
 	bytes, err := proto.Marshal(ep)
 	if err != nil {
 		log.Errorf("Failed to create TerminationEndpoint %+v: %s", ep, err)
-		return err
+		return errors.NewInvalid(err.Error())
 	}
 
 	// Put the end-point in the map using an optimistic lock if this is an update
 	entry, err := s.endpoints.Put(ctx, string(ep.ID), bytes, _map.IfNotSet())
 	if err != nil {
 		log.Errorf("Failed to create TerminationEndpoint %+v: %s", ep, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	ep.Revision = epapi.Revision(entry.Version)
-	return err
+	return nil
 }
 
 func (s *atomixStore) Get(ctx context.Context, id epapi.ID) (*epapi.TerminationEndpoint, error) {
 	if id == "" {
-		return nil, errors.New("ID cannot be empty")
+		return nil, errors.NewInvalid("ID cannot be empty")
 	}
 	entry, err := s.endpoints.Get(ctx, string(id))
 	if err != nil {
-		return nil, err
-	}
-	if entry == nil {
-		return nil, nil
+		return nil, errors.FromAtomix(err)
 	}
 	return decodeObject(entry)
 }
 
 func (s *atomixStore) Delete(ctx context.Context, id epapi.ID) error {
 	if id == "" {
-		return errors.New("ID cannot be empty")
+		return errors.NewInvalid("ID cannot be empty")
 	}
 
 	log.Infof("Deleting TerminationEndpoint %s", id)
 	_, err := s.endpoints.Remove(ctx, string(id))
 	if err != nil {
 		log.Errorf("Failed to delete TerminationEndpoint %s: %s", id, err)
-		return err
+		return errors.FromAtomix(err)
 	}
 	return nil
 }
@@ -168,7 +165,7 @@ func (s *atomixStore) Delete(ctx context.Context, id epapi.ID) error {
 func (s *atomixStore) List(ctx context.Context) ([]epapi.TerminationEndpoint, error) {
 	mapCh := make(chan *_map.Entry)
 	if err := s.endpoints.Entries(context.Background(), mapCh); err != nil {
-		return nil, err
+		return nil, errors.FromAtomix(err)
 	}
 
 	eps := make([]epapi.TerminationEndpoint, 0)
@@ -188,7 +185,7 @@ func (s *atomixStore) Watch(ctx context.Context, ch chan<- epapi.Event, opts ...
 
 	mapCh := make(chan *_map.Event)
 	if err := s.endpoints.Watch(ctx, mapCh, watchOpts...); err != nil {
-		return err
+		return errors.FromAtomix(err)
 	}
 
 	go func() {
@@ -224,7 +221,7 @@ func (s *atomixStore) Close() error {
 func decodeObject(entry *_map.Entry) (*epapi.TerminationEndpoint, error) {
 	ep := &epapi.TerminationEndpoint{}
 	if err := proto.Unmarshal(entry.Value, ep); err != nil {
-		return nil, err
+		return nil, errors.NewInvalid(err.Error())
 	}
 	ep.ID = epapi.ID(entry.Key)
 	return ep, nil

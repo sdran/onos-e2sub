@@ -13,6 +13,7 @@ import (
 	"github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"time"
 
 	"github.com/onosproject/onos-lib-go/pkg/logging"
@@ -58,6 +59,9 @@ func (r *Reconciler) Reconcile(id controller.ID) (controller.Result, error) {
 
 	sub, err := r.subs.Get(ctx, id.Value.(subapi.ID))
 	if err != nil {
+		if errors.IsNotFound(err) {
+			return controller.Result{}, nil
+		}
 		return controller.Result{}, err
 	}
 
@@ -94,13 +98,8 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 
 	// If a subscription task was not found, create one
 	taskID := taskapi.ID(fmt.Sprintf("%s:%s", sub.ID, endpoint.ID))
-	task, err := r.tasks.Get(ctx, taskID)
-	if err != nil {
-		log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
-		return controller.Result{}, err
-	}
-
-	if task == nil {
+	_, err = r.tasks.Get(ctx, taskID)
+	if errors.IsNotFound(err) {
 		log.Infof("Assigning Subscription %+v to TerminationEndpoint %+v", sub, endpoint)
 		task := &taskapi.SubscriptionTask{
 			ID:             taskapi.ID(fmt.Sprintf("%s:%s", sub.ID, endpoint.ID)),
@@ -108,10 +107,13 @@ func (r *Reconciler) reconcileActiveSubscription(sub *subapi.Subscription) (cont
 			EndpointID:     endpoint.ID,
 		}
 		err := r.tasks.Create(ctx, task)
-		if err != nil {
+		if err != nil && !errors.IsAlreadyExists(err) {
 			log.Warnf("Failed to assign Subscription %+v to TerminationEndpoint %+v: %s", sub, endpoint, err)
 			return controller.Result{}, err
 		}
+	} else if err != nil {
+		log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
+		return controller.Result{}, err
 	}
 	return controller.Result{}, nil
 }
@@ -139,7 +141,7 @@ func (r *Reconciler) reconcileDeletedSubscription(sub *subapi.Subscription) (con
 	if len(subTasks) == 0 {
 		log.Infof("Deleting Subscription %+v", sub)
 		err := r.subs.Delete(ctx, sub.ID)
-		if err != nil {
+		if err != nil && !errors.IsNotFound(err) {
 			log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 			return controller.Result{}, err
 		}
@@ -161,7 +163,7 @@ func (r *Reconciler) reconcileDeletedSubscription(sub *subapi.Subscription) (con
 		if task.Lifecycle.Phase == taskapi.Phase_CLOSE && task.Lifecycle.Status == taskapi.Status_COMPLETE {
 			log.Infof("Deleting SubscriptionTask %+v", task)
 			err = r.tasks.Delete(ctx, task.ID)
-			if err != nil {
+			if err != nil && !errors.IsNotFound(err) {
 				log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 				return controller.Result{}, err
 			}
