@@ -6,6 +6,7 @@ package task
 
 import (
 	store "github.com/onosproject/onos-e2sub/pkg/store/task"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 )
@@ -50,7 +51,7 @@ func (s *Server) GetSubscriptionTask(ctx context.Context, req *taskapi.GetSubscr
 	task, err := s.store.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetSubscriptionTaskRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &taskapi.GetSubscriptionTaskResponse{
 		Task: task,
@@ -64,7 +65,7 @@ func (s *Server) ListSubscriptionTasks(ctx context.Context, req *taskapi.ListSub
 	tasks, err := s.store.List(ctx)
 	if err != nil {
 		log.Warnf("ListSubscriptionTasksRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 
 	filtered := make([]taskapi.SubscriptionTask, 0, len(tasks))
@@ -95,7 +96,7 @@ func (s *Server) WatchSubscriptionTasks(req *taskapi.WatchSubscriptionTasksReque
 	ch := make(chan taskapi.Event)
 	if err := s.store.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchSubscriptionTasksRequest %+v failed: %v", req, err)
-		return err
+		return errors.Status(err).Err()
 	}
 
 	for event := range ch {
@@ -124,7 +125,7 @@ func (s *Server) UpdateSubscriptionTask(ctx context.Context, req *taskapi.Update
 	err := s.store.Update(ctx, req.Task)
 	if err != nil {
 		log.Warnf("UpdateSubscriptionTaskRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &taskapi.UpdateSubscriptionTaskResponse{}
 	log.Infof("Sending UpdateSubscriptionTaskResponse %+v", res)

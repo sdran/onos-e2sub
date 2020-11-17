@@ -8,6 +8,7 @@ import (
 	"context"
 	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
 	store "github.com/onosproject/onos-e2sub/pkg/store/endpoint"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"google.golang.org/grpc"
@@ -59,7 +60,7 @@ func (s *Server) AddTermination(ctx context.Context, req *regapi.AddTerminationR
 	err := s.endPointStore.Create(ctx, ep)
 	if err != nil {
 		log.Warnf("AddTerminationRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &regapi.AddTerminationResponse{}
 	log.Infof("Sending AddTerminationResponse %+v", res)
@@ -72,7 +73,7 @@ func (s *Server) GetTermination(ctx context.Context, req *regapi.GetTerminationR
 	ep, err := s.endPointStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetTerminatonRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &regapi.GetTerminationResponse{
 		Endpoint: ep,
@@ -87,7 +88,7 @@ func (s *Server) RemoveTermination(ctx context.Context, req *regapi.RemoveTermin
 	err := s.endPointStore.Delete(ctx, req.ID)
 	if err != nil {
 		log.Warnf("RemoveTerminationRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &regapi.RemoveTerminationResponse{}
 	log.Infof("Sending RemoveTerminationResponse %+v", res)
@@ -100,7 +101,7 @@ func (s *Server) ListTerminations(ctx context.Context, req *regapi.ListTerminati
 	eps, err := s.endPointStore.List(ctx)
 	if err != nil {
 		log.Warnf("ListTerminationsRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 
 	res := &regapi.ListTerminationsResponse{
@@ -121,7 +122,7 @@ func (s *Server) WatchTerminations(req *regapi.WatchTerminationsRequest, server 
 	ch := make(chan regapi.Event)
 	if err := s.endPointStore.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchTerminationsRequest %+v failed: %v", req, err)
-		return err
+		return errors.Status(err).Err()
 	}
 
 	return s.Stream(server, ch)

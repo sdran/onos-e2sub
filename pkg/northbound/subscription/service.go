@@ -8,11 +8,10 @@ import (
 	"context"
 	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
 	store "github.com/onosproject/onos-e2sub/pkg/store/subscription"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var log = logging.GetLogger("northbound", "subscription")
@@ -49,19 +48,19 @@ func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptio
 	log.Infof("Received AddSubscriptionRequest %+v", req)
 	sub := req.Subscription
 	if sub.ID == "" {
-		return nil, status.Error(codes.InvalidArgument, "Subscription ID is required")
+		return nil, errors.NewInvalid("subscription ID is required")
 	}
 	if sub.AppID == "" {
-		return nil, status.Error(codes.InvalidArgument, "Subscription AppID is required")
+		return nil, errors.NewInvalid("subscription AppID is required")
 	}
 	if sub.E2NodeID == "" {
-		return nil, status.Error(codes.InvalidArgument, "Subscription E2NodeID is required")
+		return nil, errors.NewInvalid("subscription E2NodeID is required")
 	}
 
 	err := s.subscriptionStore.Create(ctx, sub)
 	if err != nil {
 		log.Warnf("AddSubscriptionRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &subapi.AddSubscriptionResponse{
 		Subscription: sub,
@@ -76,7 +75,7 @@ func (s *Server) GetSubscription(ctx context.Context, req *subapi.GetSubscriptio
 	sub, err := s.subscriptionStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("GetSubscriptionRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &subapi.GetSubscriptionResponse{
 		Subscription: sub,
@@ -91,13 +90,13 @@ func (s *Server) RemoveSubscription(ctx context.Context, req *subapi.RemoveSubsc
 	sub, err := s.subscriptionStore.Get(ctx, req.ID)
 	if err != nil {
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	sub.Lifecycle.Status = subapi.Status_PENDING_DELETE
 	err = s.subscriptionStore.Update(ctx, sub)
 	if err != nil {
 		log.Warnf("RemoveSubscriptionRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 	res := &subapi.RemoveSubscriptionResponse{}
 	log.Infof("Sending RemoveSubscriptionResponse %+v", res)
@@ -110,7 +109,7 @@ func (s *Server) ListSubscriptions(ctx context.Context, req *subapi.ListSubscrip
 	subs, err := s.subscriptionStore.List(ctx)
 	if err != nil {
 		log.Warnf("ListSubscriptionsRequest %+v failed: %v", req, err)
-		return nil, err
+		return nil, errors.Status(err).Err()
 	}
 
 	filtered := make([]subapi.Subscription, 0, len(subs))
@@ -139,7 +138,7 @@ func (s *Server) WatchSubscriptions(req *subapi.WatchSubscriptionsRequest, serve
 	ch := make(chan subapi.Event)
 	if err := s.subscriptionStore.Watch(server.Context(), ch, watchOpts...); err != nil {
 		log.Warnf("WatchTerminationsRequest %+v failed: %v", req, err)
-		return err
+		return errors.Status(err).Err()
 	}
 
 	return s.Stream(server, ch)
