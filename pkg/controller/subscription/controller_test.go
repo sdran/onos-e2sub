@@ -85,6 +85,7 @@ func createEP(epID string) epapi.TerminationEndpoint {
 }
 
 func nextTaskEvent(t *testing.T, ch chan taskapi.Event) (taskapi.Event, taskapi.SubscriptionTask) {
+	t.Helper()
 	var event taskapi.Event
 	var task taskapi.SubscriptionTask
 	select {
@@ -92,10 +93,23 @@ func nextTaskEvent(t *testing.T, ch chan taskapi.Event) (taskapi.Event, taskapi.
 		task = event.Task
 		break
 	case <-time.After(15 * time.Second):
-		t.Error("Event channel timed out")
+		t.Error("Task Event channel timed out")
 		break
 	}
 	return event, task
+}
+
+func nextSubEvent(t *testing.T, ch chan subapi.Event) subapi.Event {
+	t.Helper()
+	var event subapi.Event
+	select {
+	case event = <-ch:
+		break
+	case <-time.After(15 * time.Second):
+		t.Error("Sub Event channel timed out")
+		break
+	}
+	return event
 }
 
 // TestAddSubscription tests adding a new subscription and the resulting events
@@ -150,11 +164,15 @@ func TestDeleteSubscription(t *testing.T) {
 	assert.NoError(t, c.subStore.Create(context.TODO(), &subAdd))
 
 	// Watch for task events
-	ch := make(chan taskapi.Event)
-	assert.NoError(t, c.taskStore.Watch(context.TODO(), ch))
+	taskCh := make(chan taskapi.Event)
+	assert.NoError(t, c.taskStore.Watch(context.TODO(), taskCh))
+
+	// Watch for subscription events
+	subCh := make(chan subapi.Event)
+	assert.NoError(t, c.subStore.Watch(context.TODO(), subCh))
 
 	// Get and check the subscription created event
-	event, task := nextTaskEvent(t, ch)
+	event, task := nextTaskEvent(t, taskCh)
 	checkTask(t, task, taskID, subAddID, epID)
 	checkEvent(t, event, taskapi.EventType_CREATED, task)
 
@@ -162,8 +180,8 @@ func TestDeleteSubscription(t *testing.T) {
 	subAdd.Lifecycle = subapi.Lifecycle{Status: subapi.Status_PENDING_DELETE}
 	assert.NoError(t, c.subStore.Update(context.TODO(), &subAdd))
 
-	// Get and check the update event
-	event, task = nextTaskEvent(t, ch)
+	// Get and check the task updated event
+	event, task = nextTaskEvent(t, taskCh)
 	checkTask(t, task, taskID, subAddID, epID)
 	checkEvent(t, event, taskapi.EventType_UPDATED, task)
 
@@ -174,17 +192,26 @@ func TestDeleteSubscription(t *testing.T) {
 	}
 	assert.NoError(t, c.taskStore.Update(context.TODO(), &task))
 
-	// Get and check the update event
-	event, task = nextTaskEvent(t, ch)
+	// Get and check the subscription updated event
+	subCreatedEvent := nextSubEvent(t, subCh)
+	assert.Equal(t, subapi.EventType_UPDATED, subCreatedEvent.Type)
+
+	// Get and check the subscription removed event
+	subCreatedEvent = nextSubEvent(t, subCh)
+	assert.Equal(t, subapi.EventType_REMOVED, subCreatedEvent.Type)
+
+	// Get and check the task update event
+	event, task = nextTaskEvent(t, taskCh)
 	checkTask(t, task, taskID, subAddID, epID)
 	checkEvent(t, event, taskapi.EventType_UPDATED, task)
 
-	// Get and check the removed event
-	event, task = nextTaskEvent(t, ch)
+	// Get and check the task removed event
+	event, task = nextTaskEvent(t, taskCh)
 	checkTask(t, task, taskID, subAddID, epID)
 	checkEvent(t, event, taskapi.EventType_REMOVED, task)
 
 	// Clean up
-	close(ch)
+	close(taskCh)
+	close(subCh)
 	destroyController(t, c)
 }
