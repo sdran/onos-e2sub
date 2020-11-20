@@ -2,7 +2,7 @@ build/_output/onos-e2sub
 **/_output
 *.DS_Store
 coverage.txt
-*.coverprofile
+*.coverprofile*
 .idea
 .vscode
 *.o
