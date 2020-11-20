@@ -54,12 +54,10 @@ protos:
 		onosproject/protoc-go:${ONOS_PROTOC_VERSION}
 
 onos-e2sub-base-docker: # @HELP build onos-e2sub base Docker image
-	@go mod vendor
 	docker build . -f build/base/Dockerfile \
 		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
 		--build-arg ONOS_MAKE_TARGET=build \
 		-t onosproject/onos-e2sub-base:${ONOS_E2T_VERSION}
-	@rm -rf vendor
 
 onos-e2sub-docker: # @HELP build onos-e2sub Docker image
 onos-e2sub-docker: onos-e2sub-base-docker
@@ -84,7 +82,7 @@ bumponosdeps: # @HELP update "onosproject" go dependencies and push patch to git
 	./../build-tools/bump-onos-deps ${VERSION}
 
 clean: # @HELP remove all the build artifacts
-	rm -rf ./build/_output ./vendor ./cmd/onos-e2sub/onos-e2sub ./cmd/onos/onos
+	rm -rf ./build/_output ./cmd/onos-e2sub/onos-e2sub ./cmd/onos/onos
 	go clean -testcache github.com/onosproject/onos-e2sub/...
 
 help:
