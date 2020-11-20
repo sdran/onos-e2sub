@@ -11,21 +11,21 @@ import (
 	"io"
 	"text/tabwriter"
 
-	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+	epapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
 const (
-	registrationHeaders = "ID\tIP\tPort\n"
-	endPointFormat      = "%s\t%s\t%d\n"
+	endPointHeaders = "ID\tIP\tPort\n"
+	endPointFormat  = "%s\t%s\t%d\n"
 )
 
-func displayHeaders(writer io.Writer) {
-	_, _ = fmt.Fprint(writer, registrationHeaders)
+func displayEndPointHeaders(writer io.Writer) {
+	_, _ = fmt.Fprint(writer, endPointHeaders)
 }
 
-func displayEndPoint(writer io.Writer, ep regapi.TerminationEndpoint) {
+func displayEndPoint(writer io.Writer, ep epapi.TerminationEndpoint) {
 	_, _ = fmt.Fprintf(writer, endPointFormat, ep.ID, ep.IP, ep.Port)
 }
 
@@ -55,7 +55,7 @@ func getAddEndPointCommand() *cobra.Command {
 func getRemoveEndPointCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "endpoint",
-		Short: "Add endpoint",
+		Short: "Remove endpoint",
 		Args:  cobra.ExactArgs(1),
 		RunE:  runRemoveEndpointCommand,
 	}
@@ -86,12 +86,12 @@ func runListEndpointsCommand(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		displayHeaders(writer)
+		displayEndPointHeaders(writer)
 	}
 
-	request := regapi.ListTerminationsRequest{}
+	request := epapi.ListTerminationsRequest{}
 
-	client := regapi.NewE2RegistryServiceClient(conn)
+	client := epapi.NewE2RegistryServiceClient(conn)
 
 	response, err := client.ListTerminations(context.Background(), &request)
 	if err != nil {
@@ -126,14 +126,14 @@ func runAddEndpointCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 
-	ep := regapi.TerminationEndpoint{
-		ID:   regapi.ID(ID),
-		IP:   regapi.IP(IP),
-		Port: regapi.Port(port),
+	ep := epapi.TerminationEndpoint{
+		ID:   epapi.ID(ID),
+		IP:   epapi.IP(IP),
+		Port: epapi.Port(port),
 	}
-	request := regapi.AddTerminationRequest{Endpoint: &ep}
+	request := epapi.AddTerminationRequest{Endpoint: &ep}
 
-	client := regapi.NewE2RegistryServiceClient(conn)
+	client := epapi.NewE2RegistryServiceClient(conn)
 
 	_, err = client.AddTermination(context.Background(), &request)
 
@@ -148,9 +148,9 @@ func runRemoveEndpointCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 
-	request := regapi.RemoveTerminationRequest{ID: regapi.ID(ID)}
+	request := epapi.RemoveTerminationRequest{ID: epapi.ID(ID)}
 
-	client := regapi.NewE2RegistryServiceClient(conn)
+	client := epapi.NewE2RegistryServiceClient(conn)
 
 	_, err = client.RemoveTermination(context.Background(), &request)
 
@@ -159,7 +159,7 @@ func runRemoveEndpointCommand(cmd *cobra.Command, args []string) error {
 
 func runGetEndpointCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	ID := regapi.ID(args[0])
+	ID := epapi.ID(args[0])
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -170,12 +170,12 @@ func runGetEndpointCommand(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		displayHeaders(writer)
+		displayEndPointHeaders(writer)
 	}
 
-	request := regapi.GetTerminationRequest{ID: ID}
+	request := epapi.GetTerminationRequest{ID: ID}
 
-	client := regapi.NewE2RegistryServiceClient(conn)
+	client := epapi.NewE2RegistryServiceClient(conn)
 
 	response, err := client.GetTermination(context.Background(), &request)
 	if err != nil {

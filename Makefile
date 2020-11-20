@@ -10,6 +10,7 @@ BUF_VERSION := 0.27.1
 
 build: # @HELP build the Go binaries and run all validations (default)
 build:
+	export GOPRIVATE="github.com/onosproject/*"
 	go build -o build/_output/onos-e2sub ./cmd/onos-e2sub
 
 test: # @HELP run the unit tests and source code validation
@@ -19,7 +20,11 @@ test: build deps linters license_check
 
 coverage: # @HELP generate unit test coverage data
 coverage: build deps linters license_check
-	./../build-tools/build/coveralls/coveralls-coverage onos-e2sub xZuVup4oLZFkqxtkFW2qEkFTf9NDZhN2g
+	export GOPRIVATE="github.com/onosproject/*"
+	go test -covermode=count -coverprofile=onos.coverprofile github.com/onosproject/onos-e2sub/pkg/...
+	cd .. && go get github.com/mattn/goveralls && cd onos-e2sub
+	grep -v .pb.go onos.coverprofile >onos-nogrpc.coverprofile
+	goveralls -coverprofile=onos-nogrpc.coverprofile -service travis-pro -repotoken xZuVup4oLZFkqxtkFW2qEkFTf9NDZhN2g
 
 deps: # @HELP ensure that the required dependencies are in place
 	go build -v ./...
