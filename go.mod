@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/atomix/go-client v0.4.1
 	github.com/gogo/protobuf v1.3.1
-	github.com/onosproject/onos-api/go v0.6.1
+	github.com/onosproject/onos-api/go v0.6.5
 	github.com/onosproject/onos-lib-go v0.6.25
 	github.com/onosproject/onos-ric-sdk-go v0.6.4
 	github.com/spf13/cobra v0.0.6
