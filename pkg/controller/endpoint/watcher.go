@@ -6,13 +6,14 @@ package endpoint
 
 import (
 	"context"
-	endpointapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+	"sync"
+
+	epapi "github.com/onosproject/onos-api/go/onos/e2sub/endpoint"
 	"github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"sync"
 )
 
 const queueSize = 100
@@ -32,7 +33,7 @@ func (w *Watcher) Start(ch chan<- controller.ID) error {
 		return nil
 	}
 
-	endpointCh := make(chan endpointapi.Event, queueSize)
+	endpointCh := make(chan epapi.Event, queueSize)
 	ctx, cancel := context.WithCancel(context.Background())
 	err := w.endpoints.Watch(ctx, endpointCh)
 	if err != nil {
@@ -95,7 +96,7 @@ func (w *PodWatcher) Start(ch chan<- controller.ID) error {
 	go func() {
 		for event := range watch.ResultChan() {
 			pod := event.Object.(*corev1.Pod)
-			endpoint, err := w.endpoints.Get(ctx, endpointapi.ID(pod.Name))
+			endpoint, err := w.endpoints.Get(ctx, epapi.ID(pod.Name))
 			if err != nil {
 				log.Error(err)
 			} else {

@@ -11,7 +11,7 @@ import (
 	"io"
 	"text/tabwriter"
 
-	epapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+	epapi "github.com/onosproject/onos-api/go/onos/e2sub/endpoint"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 )

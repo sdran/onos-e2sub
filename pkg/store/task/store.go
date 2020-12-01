@@ -6,16 +6,17 @@ package task
 
 import (
 	"context"
-	"github.com/atomix/go-client/pkg/client/util/net"
-	"github.com/onosproject/onos-lib-go/pkg/errors"
-	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"io"
 	"time"
 
-	"github.com/atomix/go-client/pkg/client/map"
+	"github.com/atomix/go-client/pkg/client/util/net"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
+	"github.com/onosproject/onos-lib-go/pkg/logging"
+
+	_map "github.com/atomix/go-client/pkg/client/map"
 	"github.com/atomix/go-client/pkg/client/primitive"
 	"github.com/gogo/protobuf/proto"
-	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
+	taskapi "github.com/onosproject/onos-api/go/onos/e2sub/task"
 	"github.com/onosproject/onos-e2sub/pkg/config"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
 )

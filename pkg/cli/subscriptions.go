@@ -8,9 +8,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
 	"io"
 	"text/tabwriter"
+
+	subapi "github.com/onosproject/onos-api/go/onos/e2sub/subscription"
 
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/onosproject/onos-ric-sdk-go/pkg/e2/subscription"

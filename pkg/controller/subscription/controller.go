@@ -7,15 +7,15 @@ package subscription
 import (
 	"context"
 	"fmt"
-	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
-	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
+	"time"
+
+	subapi "github.com/onosproject/onos-api/go/onos/e2sub/subscription"
+	taskapi "github.com/onosproject/onos-api/go/onos/e2sub/task"
 	"github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
-	"time"
-
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 )
 

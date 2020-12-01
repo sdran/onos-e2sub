@@ -6,14 +6,17 @@ package endpoint
 
 import (
 	"context"
-	endpointapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+
+	"time"
+
+	epapi "github.com/onosproject/onos-api/go/onos/e2sub/endpoint"
+
 	"github.com/onosproject/onos-e2sub/pkg/store/endpoint"
 	"github.com/onosproject/onos-lib-go/pkg/controller"
 	"github.com/onosproject/onos-lib-go/pkg/env"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"time"
 
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 )
@@ -54,7 +57,7 @@ func (r *Reconciler) Reconcile(id controller.ID) (controller.Result, error) {
 	defer cancel()
 
 	// Get the endpoint from the store
-	endpoint, err := r.endpoints.Get(ctx, id.Value.(endpointapi.ID))
+	endpoint, err := r.endpoints.Get(ctx, id.Value.(epapi.ID))
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return controller.Result{}, nil

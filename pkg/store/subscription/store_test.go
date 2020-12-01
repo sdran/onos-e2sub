@@ -6,12 +6,13 @@ package subscription
 
 import (
 	"context"
-	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
+	"testing"
+	"time"
+
+	subapi "github.com/onosproject/onos-api/go/onos/e2sub/subscription"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestSubscriptionStore(t *testing.T) {

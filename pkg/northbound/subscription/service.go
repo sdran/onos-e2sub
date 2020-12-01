@@ -6,7 +6,8 @@ package subscription
 
 import (
 	"context"
-	subapi "github.com/onosproject/onos-e2sub/api/e2/subscription/v1beta1"
+
+	subapi "github.com/onosproject/onos-api/go/onos/e2sub/subscription"
 	store "github.com/onosproject/onos-e2sub/pkg/store/subscription"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"

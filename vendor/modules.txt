@@ -71,8 +71,6 @@ github.com/eapache/queue
 github.com/ericchiang/oidc
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
-# github.com/go-playground/overalls v0.0.0-20191218162659-7df9f728c018
-## explicit
 # github.com/gogo/protobuf v1.3.1
 ## explicit
 github.com/gogo/protobuf/gogoproto
@@ -133,8 +131,6 @@ github.com/klauspost/compress/zstd/internal/xxhash
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/magiconair/properties v1.8.1
 github.com/magiconair/properties
-# github.com/mattn/goveralls v0.0.7
-## explicit
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/mapstructure v1.1.2
@@ -143,6 +139,11 @@ github.com/mitchellh/mapstructure
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
+# github.com/onosproject/onos-api/go v0.6.1
+## explicit
+github.com/onosproject/onos-api/go/onos/e2sub/endpoint
+github.com/onosproject/onos-api/go/onos/e2sub/subscription
+github.com/onosproject/onos-api/go/onos/e2sub/task
 # github.com/onosproject/onos-lib-go v0.6.25
 ## explicit
 github.com/onosproject/onos-lib-go/api/logging
@@ -160,7 +161,7 @@ github.com/onosproject/onos-lib-go/pkg/logging
 github.com/onosproject/onos-lib-go/pkg/logging/cli
 github.com/onosproject/onos-lib-go/pkg/logging/service
 github.com/onosproject/onos-lib-go/pkg/northbound
-# github.com/onosproject/onos-ric-sdk-go v0.6.2
+# github.com/onosproject/onos-ric-sdk-go v0.6.4
 ## explicit
 github.com/onosproject/onos-ric-sdk-go/pkg/e2/encoding
 github.com/onosproject/onos-ric-sdk-go/pkg/e2/node
@@ -201,8 +202,6 @@ github.com/spf13/viper
 github.com/stretchr/testify/assert
 # github.com/subosito/gotenv v1.2.0
 github.com/subosito/gotenv
-# github.com/yookoala/realpath v1.0.0
-## explicit
 # go.uber.org/atomic v1.5.0
 go.uber.org/atomic
 # go.uber.org/multierr v1.3.0
@@ -282,7 +281,7 @@ google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
 # google.golang.org/genproto v0.0.0-20200731012542-8145dea6a485
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.33.1
+# google.golang.org/grpc v1.33.2
 ## explicit
 google.golang.org/grpc
 google.golang.org/grpc/attributes
@@ -405,7 +404,7 @@ gopkg.in/square/go-jose.v1/json
 gopkg.in/square/go-jose.v2
 gopkg.in/square/go-jose.v2/cipher
 gopkg.in/square/go-jose.v2/json
-# gopkg.in/yaml.v2 v2.2.8
+# gopkg.in/yaml.v2 v2.3.0
 gopkg.in/yaml.v2
 # honnef.co/go/tools v0.0.1-2019.2.3
 honnef.co/go/tools/arg

@@ -5,15 +5,13 @@
 package task
 
 import (
+	"context"
+
+	taskapi "github.com/onosproject/onos-api/go/onos/e2sub/task"
 	store "github.com/onosproject/onos-e2sub/pkg/store/task"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/onosproject/onos-lib-go/pkg/logging"
 	"github.com/onosproject/onos-lib-go/pkg/northbound"
-)
-
-import (
-	"context"
-	taskapi "github.com/onosproject/onos-e2sub/api/e2/task/v1beta1"
 	"google.golang.org/grpc"
 )
 

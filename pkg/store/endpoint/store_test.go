@@ -6,12 +6,13 @@ package endpoint
 
 import (
 	"context"
-	regapi "github.com/onosproject/onos-e2sub/api/e2/endpoint/v1beta1"
+	"testing"
+	"time"
+
+	epapi "github.com/onosproject/onos-api/go/onos/e2sub/endpoint"
 	"github.com/onosproject/onos-lib-go/pkg/atomix"
 	"github.com/onosproject/onos-lib-go/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestEndPointStore(t *testing.T) {
@@ -25,35 +26,35 @@ func TestEndPointStore(t *testing.T) {
 	assert.NoError(t, err)
 	defer store2.Close()
 
-	ch := make(chan regapi.Event)
+	ch := make(chan epapi.Event)
 	err = store2.Watch(context.Background(), ch)
 	assert.NoError(t, err)
 
-	ep1 := &regapi.TerminationEndpoint{ID: "ep1", IP: "10.10.10.1", Port: 111}
-	ep2 := &regapi.TerminationEndpoint{ID: "ep2", IP: "10.10.10.2", Port: 222}
+	ep1 := &epapi.TerminationEndpoint{ID: "ep1", IP: "10.10.10.1", Port: 111}
+	ep2 := &epapi.TerminationEndpoint{ID: "ep2", IP: "10.10.10.2", Port: 222}
 
 	// Create a new end-point in one store
 	err = store1.Create(context.TODO(), ep1)
 	assert.NoError(t, err)
-	assert.NotEqual(t, regapi.Revision(0), ep1.Revision)
+	assert.NotEqual(t, epapi.Revision(0), ep1.Revision)
 
 	// Get it from the other store
 	ep, err := store2.Get(context.TODO(), "ep1")
 	assert.NoError(t, err)
 	assert.NotNil(t, ep)
 	assert.Equal(t, ep1.ID, ep.ID)
-	assert.NotEqual(t, regapi.Revision(0), ep1.Revision)
+	assert.NotEqual(t, epapi.Revision(0), ep1.Revision)
 
 	// Create another end-point
 	err = store2.Create(context.TODO(), ep2)
 	assert.NoError(t, err)
-	assert.NotEqual(t, regapi.Revision(0), ep2.Revision)
+	assert.NotEqual(t, epapi.Revision(0), ep2.Revision)
 
 	// Verify events were received for the two end-points
 	event := nextEvent(t, ch)
-	assert.Equal(t, regapi.ID("ep1"), event.ID)
+	assert.Equal(t, epapi.ID("ep1"), event.ID)
 	event = nextEvent(t, ch)
-	assert.Equal(t, regapi.ID("ep2"), event.ID)
+	assert.Equal(t, epapi.ID("ep2"), event.ID)
 
 	// List the end-points
 	eps, err := store1.List(context.TODO())
@@ -68,11 +69,11 @@ func TestEndPointStore(t *testing.T) {
 	assert.True(t, errors.IsNotFound(err))
 	assert.Nil(t, ep)
 
-	_ = &regapi.TerminationEndpoint{ID: "ep2"}
+	_ = &epapi.TerminationEndpoint{ID: "ep2"}
 	err = store1.Create(context.TODO(), ep2)
 	assert.NoError(t, err)
 
-	ch = make(chan regapi.Event)
+	ch = make(chan epapi.Event)
 	err = store1.Watch(context.TODO(), ch, WithReplay())
 	assert.NoError(t, err)
 
@@ -82,7 +83,7 @@ func TestEndPointStore(t *testing.T) {
 	assert.NotNil(t, ep)
 }
 
-func nextEvent(t *testing.T, ch chan regapi.Event) *regapi.TerminationEndpoint {
+func nextEvent(t *testing.T, ch chan epapi.Event) *epapi.TerminationEndpoint {
 	select {
 	case c := <-ch:
 		return &c.Endpoint
