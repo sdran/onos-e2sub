@@ -69,10 +69,12 @@ func checkEvent(t *testing.T, event taskapi.Event, eventType taskapi.EventType, 
 
 func createSubscription(subID string, e2ID string) subapi.Subscription {
 	return subapi.Subscription{
-		ID:        subapi.ID(subID),
-		Revision:  1,
-		AppID:     "app1",
-		E2NodeID:  subapi.E2NodeID(e2ID),
+		ID:       subapi.ID(subID),
+		Revision: 1,
+		AppID:    "app1",
+		Details: &subapi.SubscriptionDetails{
+			E2NodeID: subapi.E2NodeID(e2ID),
+		},
 		Lifecycle: subapi.Lifecycle{Status: subapi.Status_ACTIVE},
 	}
 }

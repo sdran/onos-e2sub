@@ -29,7 +29,7 @@ func displaySubscriptionHeaders(writer io.Writer) {
 
 func displaySubscription(writer io.Writer, sub *subapi.Subscription) {
 	_, _ = fmt.Fprintf(writer, subscriptionFormat,
-		sub.ID, sub.Revision, sub.AppID, sub.ServiceModel.ID, sub.E2NodeID,
+		sub.ID, sub.Revision, sub.AppID, sub.Details.ServiceModel.ID, sub.Details.E2NodeID,
 		sub.Lifecycle.Status)
 }
 
@@ -141,12 +141,14 @@ func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	defer cancel()
 
 	sub := &subapi.Subscription{
-		ID:           subapi.ID(ID),
-		Revision:     subapi.Revision(revision),
-		AppID:        subapi.AppID(appID),
-		E2NodeID:     subapi.E2NodeID(e2NodeID),
-		ServiceModel: &subapi.ServiceModel{ID: subapi.ServiceModelID(smID)},
-		Lifecycle:    subapi.Lifecycle{Status: subapi.Status_ACTIVE},
+		ID:       subapi.ID(ID),
+		Revision: subapi.Revision(revision),
+		AppID:    subapi.AppID(appID),
+		Details: &subapi.SubscriptionDetails{
+			E2NodeID:     subapi.E2NodeID(e2NodeID),
+			ServiceModel: subapi.ServiceModel{ID: subapi.ServiceModelID(smID)},
+		},
+		Lifecycle: subapi.Lifecycle{Status: subapi.Status_ACTIVE},
 	}
 
 	err = client.Add(ctx, sub)

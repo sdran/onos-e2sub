@@ -65,9 +65,7 @@ func TestSubscriptionStore(t *testing.T) {
 	assert.Equal(t, subapi.ID("subscription-2"), subscriptionEvent.ID)
 
 	// Update one of the subscriptions
-	sub2.ServiceModel = &subapi.ServiceModel{
-		ID: subapi.ServiceModelID("service-model-2"),
-	}
+	sub2.Lifecycle.Status = subapi.Status_PENDING_DELETE
 	revision := sub2.Revision
 	err = store1.Update(context.TODO(), sub2)
 	assert.NoError(t, err)

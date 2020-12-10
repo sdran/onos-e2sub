@@ -54,7 +54,7 @@ func (s *Server) AddSubscription(ctx context.Context, req *subapi.AddSubscriptio
 	if sub.AppID == "" {
 		return nil, errors.NewInvalid("subscription AppID is required")
 	}
-	if sub.E2NodeID == "" {
+	if sub.Details.E2NodeID == "" {
 		return nil, errors.NewInvalid("subscription E2NodeID is required")
 	}
 
