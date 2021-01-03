@@ -104,7 +104,8 @@ func runListSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, sub := range response {
-		displaySubscription(writer, &sub)
+		displaySub := sub
+		displaySubscription(writer, &displaySub)
 	}
 
 	_ = writer.Flush()

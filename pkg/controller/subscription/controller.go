@@ -154,7 +154,8 @@ func (r *Reconciler) reconcileDeletedSubscription(sub *subapi.Subscription) (con
 			log.Infof("Closing SubscriptionTask %+v", task)
 			task.Lifecycle.Phase = taskapi.Phase_CLOSE
 			task.Lifecycle.Status = taskapi.Status_PENDING
-			err := r.tasks.Update(ctx, &task)
+			updateTask := task
+			err := r.tasks.Update(ctx, &updateTask)
 			if err != nil {
 				log.Warnf("Failed to reconcile Subscription %+v: %s", sub, err)
 				return controller.Result{}, err
