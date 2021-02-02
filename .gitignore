@@ -11,3 +11,7 @@ coverage.txt
 .cproject
 .eclipse
 .settings/
+coverage.xml
+go-coverage-output.out
+go-test-output.out
+report.xml

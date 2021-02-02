@@ -18,6 +18,10 @@ test: build deps linters license_check
 	go test -race github.com/onosproject/onos-e2sub/pkg/...
 	go test -race github.com/onosproject/onos-e2sub/cmd/...
 
+jenkins-test: build-tools # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
+jenkins-test: build deps license_check linters
+	TEST_PACKAGES=github.com/onosproject/onos-e2sub/... ./../build-tools/build/jenkins/make-unit
+
 coverage: # @HELP generate unit test coverage data
 coverage: build deps linters license_check
 	export GOPRIVATE="github.com/onosproject/*"
@@ -31,10 +35,16 @@ deps: # @HELP ensure that the required dependencies are in place
 	bash -c "diff -u <(echo -n) <(git diff go.mod)"
 	bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
-linters: # @HELP examines Go source code and reports coding problems
-	golangci-lint run --timeout 30m
+linters: golang-ci # @HELP examines Go source code and reports coding problems
+	golangci-lint run --timeout 5m
 
-license_check: # @HELP examine and ensure license headers exist
+build-tools: # @HELP install the ONOS build tools if needed
+	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
+
+golang-ci: # @HELP install golang-ci if not present
+	golangci-lint --version || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b `go env GOPATH`/bin v1.36.0
+
+license_check: build-tools # @HELP examine and ensure license headers exist
 	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
 	./../build-tools/licensing/boilerplate.py -v --rootdir=${CURDIR} --boilerplate LicenseRef-ONF-Member-1.0
 
@@ -53,16 +63,9 @@ protos:
 		--entrypoint build/bin/compile-protos.sh \
 		onosproject/protoc-go:${ONOS_PROTOC_VERSION}
 
-onos-e2sub-base-docker: # @HELP build onos-e2sub base Docker image
-	docker build . -f build/base/Dockerfile \
-		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
-		--build-arg ONOS_MAKE_TARGET=build \
-		-t onosproject/onos-e2sub-base:${ONOS_E2T_VERSION}
-
 onos-e2sub-docker: # @HELP build onos-e2sub Docker image
-onos-e2sub-docker: onos-e2sub-base-docker
+onos-e2sub-docker:
 	docker build . -f build/onos-e2sub/Dockerfile \
-		--build-arg ONOS_E2T_BASE_VERSION=${ONOS_E2T_VERSION} \
 		-t onosproject/onos-e2sub:${ONOS_E2T_VERSION}
 
 images: # @HELP build all Docker images
