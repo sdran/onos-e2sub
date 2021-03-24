@@ -63,14 +63,20 @@ func TestServiceBasics(t *testing.T) {
 
 	_, err := client.AddSubscription(context.Background(), &subapi.AddSubscriptionRequest{
 		Subscription: &subapi.Subscription{
-			ID: "1", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{ID: "sm1"}},
+			ID: "1", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{
+				Name:    "sm1",
+				Version: "v1",
+			}},
 		},
 	})
 	assert.NoError(t, err)
 
 	_, err = client.AddSubscription(context.Background(), &subapi.AddSubscriptionRequest{
 		Subscription: &subapi.Subscription{
-			ID: "2", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{ID: "sm2"}},
+			ID: "2", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{
+				Name:    "sm2",
+				Version: "v1",
+			}},
 		},
 	})
 	assert.NoError(t, err)
@@ -100,7 +106,10 @@ func TestWatchBasics(t *testing.T) {
 
 	_, err := client.AddSubscription(context.Background(), &subapi.AddSubscriptionRequest{
 		Subscription: &subapi.Subscription{
-			ID: "1", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{ID: "sm1"}},
+			ID: "1", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{
+				Name:    "sm1",
+				Version: "v1",
+			}},
 		},
 	})
 	assert.NoError(t, err)
@@ -132,7 +141,10 @@ func TestWatchBasics(t *testing.T) {
 	pause.Wait()
 	_, err = client.AddSubscription(context.Background(), &subapi.AddSubscriptionRequest{
 		Subscription: &subapi.Subscription{
-			ID: "2", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{ID: "sm2"}},
+			ID: "2", AppID: "foo", Details: &subapi.SubscriptionDetails{E2NodeID: "bar", ServiceModel: subapi.ServiceModel{
+				Name:    "sm2",
+				Version: "v1",
+			}},
 		},
 	})
 	assert.NoError(t, err)
